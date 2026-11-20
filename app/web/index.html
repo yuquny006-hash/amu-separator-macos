@@ -1,0 +1,1920 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amu Music · 音频分离软件 完整版</title>
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<style>
+  /* =========================================================
+     Amu Music · 音频分离软件 完整版
+     视觉方案：Amu 官网同源主题（www.amumusic.com/tokens.css 唯一 token 源）
+     明暗：浅色（默认）/ 黑夜；主题色：暗金（默认）/ 青蓝 / 绛紫，共 6 组合
+     黑夜换色连带底色微调（带色相的暗夜），与官网行为一致；localStorage 记忆
+     ========================================================= */
+  :root{
+    /* —— 强调色 = 官网品牌金（浅色版）—— */
+    --acc:#B8860B; --acc2:#9A6F00; --accTxt:#FFFFFF;
+    --accSoft:rgba(184,134,11,.12); --accLine:rgba(184,134,11,.25);
+    --grad:linear-gradient(120deg,#B8860B,#9A6F00);
+    --sw0:#B8860B; --sw1:#1668B8; --sw2:#7A4FD0;   /* 外观菜单色点：暗金 / 青蓝 / 绛紫（白天版） */
+    /* —— 表面层级（官网 tokens：bg / surface / bg-3）—— */
+    --bg:#F4F6FA; --surf:#FFFFFF; --surf2:#F8FAFC; --surf3:#ECEFF5;
+    --line:#E8EDF3; --line2:#D3DBE6;
+    --txt:#1F2937; --sub:#64748B; --dim:#94A3B8;
+    --wave:#FFFFFF; --waveBase:#D3DBE6;
+    --amber:#B26A00; --red:#D93A3A; --thumb:#FFFFFF;
+    --r:18px; --r2:14px; --r3:10px;
+    --sh1:0 1px 2px rgba(15,23,42,.05);
+    --sh2:0 6px 18px rgba(15,23,42,.08);
+    --sh3:0 14px 34px rgba(15,23,42,.12);
+    --p:0%;
+  }
+  /* 浅色换色：底色保持浅色，只换强调色（与官网 data-theme=light + accent 行为一致） */
+  html[data-t="1"]{ --acc:#1668B8; --acc2:#0E548F; --accSoft:rgba(22,104,184,.12); --accLine:rgba(22,104,184,.25);
+    --grad:linear-gradient(120deg,#1668B8,#0E548F); }
+  html[data-t="2"]{ --acc:#7A4FD0; --acc2:#6539B8; --accSoft:rgba(122,79,208,.12); --accLine:rgba(122,79,208,.25);
+    --grad:linear-gradient(120deg,#7A4FD0,#6539B8); }
+
+  /* 黑夜模式（官网暗色默认层）：换色前的品牌金基准 */
+  html[data-theme="dark"]{
+    --bg:#0E1116; --surf:#1A212B; --surf2:#202836; --surf3:#262F3D;
+    --line:#1E242F; --line2:#2A3242;
+    --txt:#E8ECF2; --sub:#98A2B3; --dim:#7E8798;
+    --wave:#0A0D12; --waveBase:#2A3242;
+    --accSoft:rgba(255,201,77,.14); --accLine:rgba(255,201,77,.35); --thumb:#E8ECF2;
+    --sw0:#FFC94D; --sw1:#5AB0FF; --sw2:#C79BFF;   /* 色点展示色随明暗变亮 */
+    --amber:#FFB454; --red:#FF8A8A;
+    --sh1:0 1px 2px rgba(0,0,0,.4);
+    --sh2:0 8px 24px rgba(0,0,0,.24);
+    --sh3:0 18px 40px rgba(0,0,0,.32);
+  }
+
+  /* 黑夜 × 主题色（官网 data-accent 行为：换色连带底色微调成带色相的暗夜） */
+  html[data-theme="dark"][data-t="0"]{
+    --acc:#FFC94D; --acc2:#FFD87A; --accTxt:#0E1116;
+    --accSoft:rgba(255,201,77,.14); --accLine:rgba(255,201,77,.35);
+    --grad:linear-gradient(120deg,#FFC94D,#FFD87A);
+  }
+  html[data-theme="dark"][data-t="1"]{
+    --acc:#5AB0FF; --acc2:#A6D4FF; --accTxt:#06101C;
+    --accSoft:rgba(90,176,255,.14); --accLine:rgba(90,176,255,.38);
+    --grad:linear-gradient(120deg,#5AB0FF,#A6D4FF);
+    --bg:#0B101B; --surf:#111827; --surf2:#161F33; --surf3:#1C2745;
+    --line:#1C2740; --line2:#28365A;
+    --wave:#080C14; --waveBase:#28365A;
+  }
+  html[data-theme="dark"][data-t="2"]{
+    --acc:#C79BFF; --acc2:#E2CDFF; --accTxt:#150B26;
+    --accSoft:rgba(199,155,255,.14); --accLine:rgba(199,155,255,.38);
+    --grad:linear-gradient(120deg,#C79BFF,#E2CDFF);
+    --bg:#110D1A; --surf:#171226; --surf2:#1E1832; --surf3:#251E40;
+    --line:#272040; --line2:#372C5C;
+    --wave:#0C0915; --waveBase:#372C5C;
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:var(--bg); color:var(--txt); min-height:100vh; padding:30px 20px 56px;
+    font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",system-ui,-apple-system,"Segoe UI",sans-serif;
+    -webkit-font-smoothing:antialiased; font-size:14px;
+  }
+  .wrap{max-width:1120px;margin:0 auto}
+  .hide{display:none !important}
+
+  /* ---------- 品牌头部 ---------- */
+  header{
+    display:flex;align-items:center;gap:15px;flex-wrap:wrap;
+    padding:0 4px 20px;border-bottom:1px solid var(--line);margin-bottom:22px;
+  }
+  .logo{
+    width:50px;height:50px;border-radius:15px;flex:0 0 50px;overflow:hidden;position:relative;
+    background:var(--grad);box-shadow:0 10px 24px -12px var(--acc);
+  }
+  .logo svg,.logo img{display:block;width:100%;height:100%;object-fit:cover}
+  .brand{display:flex;flex-direction:column;min-width:0}
+  .brand h1{margin:0;font-size:22px;font-weight:800;letter-spacing:.2px;color:var(--txt)}
+  .brand .tag{margin-top:4px;font-size:12px;color:var(--dim);letter-spacing:1.6px}
+  .pill{margin-left:auto;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .pill span{
+    font-size:11.5px;padding:7px 12px;border-radius:999px;background:var(--surf);
+    border:1px solid var(--line);color:var(--sub);box-shadow:var(--sh1);white-space:nowrap;
+  }
+  .pill span.on{color:var(--acc);background:var(--accSoft);border-color:var(--accLine);font-weight:600}
+  /* ---------- 外观下拉（与官网 amumusic.com 一致：明暗 + 主题色 两组，√ 选中） ---------- */
+  .ap{position:relative;margin-left:auto}
+  .ap-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:999px;
+    background:var(--surf);border:1px solid var(--line);color:var(--sub);font-size:12.5px;font-weight:600;
+    cursor:pointer;box-shadow:var(--sh1);transition:.16s;white-space:nowrap}
+  .ap-btn .ic{font-size:13px;line-height:1;color:var(--acc)}
+  .ap-btn:hover{border-color:var(--accLine);color:var(--txt)}
+  .ap-menu{position:absolute;top:calc(100% + 9px);right:0;min-width:176px;z-index:60;
+    background:var(--surf);border:1px solid var(--line2);border-radius:14px;box-shadow:var(--sh3);
+    padding:7px;animation:apIn .14s ease}
+  .ap-menu[hidden]{display:none}
+  @keyframes apIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
+  .ap-cap{font-size:10.5px;color:var(--dim);padding:7px 12px 4px;letter-spacing:.5px}
+  .ap-it{display:flex;align-items:center;gap:9px;width:100%;padding:8px 12px;border:0;border-radius:9px;
+    background:transparent;color:var(--txt);font-size:12.5px;text-align:left;cursor:pointer;font-family:inherit}
+  .ap-it:hover{background:var(--accSoft)}
+  .ap-it .dot{width:15px;height:15px;flex:0 0 15px;border-radius:50%;background:var(--c);
+    box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}
+  .ap-it .ck{margin-left:auto;font-size:12.5px;font-weight:800;color:var(--acc);visibility:hidden}
+  .ap-it.on{font-weight:700}
+  .ap-it.on .ck{visibility:visible}
+
+  /* ---------- 卡片 ---------- */
+  .card{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);
+    padding:22px 24px;margin-bottom:14px;box-shadow:var(--sh1)}
+  .step-head{display:flex;align-items:center;gap:12px;margin-bottom:17px}
+  .num{width:28px;height:28px;flex:0 0 28px;border-radius:10px;font-size:13px;font-weight:800;
+    display:flex;align-items:center;justify-content:center;color:var(--accTxt);background:var(--grad);
+    box-shadow:0 6px 16px -8px var(--acc)}
+  .step-head h2{margin:0;font-size:15.5px;font-weight:700}
+  .step-head .hint{margin-left:auto;font-size:11.5px;color:var(--dim)}
+
+  /* ---------- 拖拽 ---------- */
+  .drop{border:1.5px dashed var(--line2);border-radius:var(--r2);padding:32px 18px;text-align:center;
+    transition:.22s;cursor:pointer;background:var(--surf2)}
+  .drop:hover{border-color:var(--accLine);background:var(--surf)}
+  .drop.hot{border-color:var(--acc);background:var(--accSoft);box-shadow:0 0 0 4px var(--accSoft)}
+  .drop .ic{width:46px;height:46px;margin:0 auto 12px;border-radius:14px;display:flex;align-items:center;
+    justify-content:center;font-size:22px;color:#fff;background:var(--grad);
+    box-shadow:0 10px 22px -10px var(--acc)}
+  .drop .big{font-size:15px;margin-bottom:6px;font-weight:700}
+  .drop .sm{font-size:11.8px;color:var(--dim);line-height:1.7}
+
+  .filechip{display:none;align-items:center;gap:12px;margin-top:13px;background:var(--surf2);
+    border:1px solid var(--line);border-radius:var(--r2);padding:12px 15px;font-size:13.5px}
+  .filechip.show{display:flex}
+  .filechip .dot{width:8px;height:8px;border-radius:50%;background:#16a34a;flex:0 0 8px;
+    box-shadow:0 0 0 3px #16a34a22}
+  .filechip .fn{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+  .filechip .fs{color:var(--dim);font-size:11.5px;margin-left:auto;flex:0 0 auto;
+    font-variant-numeric:tabular-nums}
+
+  /* ---------- 原始音频：波形在上、播放条在下 ---------- */
+  .player{display:none;margin-top:13px;border:1px solid var(--line);border-radius:var(--r2);
+    overflow:hidden;background:var(--surf);box-shadow:var(--sh1)}
+  .player.show{display:block}
+  .player .plab{padding:10px 16px 0;font-size:11px;color:var(--dim);letter-spacing:.3px}
+  .player .wave{position:relative;height:96px;cursor:crosshair;background:var(--wave);touch-action:none}
+  .player .wave canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .player .wave .over{clip-path:inset(0 calc(100% - var(--pv,0%)) 0 0)}
+  .player .grid{position:absolute;inset:0;pointer-events:none;
+    background-image:repeating-linear-gradient(90deg,rgba(21,24,33,.045) 0 1px,transparent 1px 10%)}
+  .player .ph{position:absolute;top:0;bottom:0;left:var(--pv,0%);width:2px;margin-left:-1px;
+    background:var(--acc);box-shadow:0 0 0 1px #ffffff99;pointer-events:none;opacity:0;
+    transition:opacity .15s;z-index:4}
+  .player:hover .ph{opacity:1}
+  .player .ph::after{content:"";position:absolute;top:-1px;left:-4px;width:10px;height:10px;
+    border-radius:3px;background:var(--acc);box-shadow:0 2px 6px -1px rgba(0,0,0,.35)}
+
+  /* 播放条（波形下方独立一排） */
+  .scrub{display:flex;align-items:center;gap:15px;padding:12px 16px;background:var(--surf);
+    border-top:1px solid var(--line)}
+  .pp{width:40px;height:40px;flex:0 0 40px;border:0;border-radius:50%;cursor:pointer;
+    background:var(--grad);color:#fff;font-size:14px;display:flex;align-items:center;
+    justify-content:center;box-shadow:0 8px 18px -8px var(--acc);transition:.16s;padding:0}
+  .pp:hover{filter:brightness(1.05);transform:scale(1.04)}
+  .pp.big{width:48px;height:48px;flex:0 0 48px;font-size:17px}
+  .pp.ghost{background:var(--surf);color:var(--sub);border:1px solid var(--line2);box-shadow:var(--sh1)}
+  .pp.ghost:hover{color:var(--acc);border-color:var(--acc)}
+  .player .pp{width:38px;height:38px;flex:0 0 38px;font-size:13px}
+
+  .tbar{flex:1;height:6px;border-radius:4px;background:var(--surf3);position:relative;cursor:pointer}
+  .tbar i{position:absolute;left:0;top:0;bottom:0;width:var(--p,0%);border-radius:4px;background:var(--grad)}
+  .tbar b{position:absolute;left:var(--p,0%);top:50%;width:15px;height:15px;margin:-7.5px 0 0 -7.5px;
+    border-radius:50%;background:#fff;box-shadow:0 0 0 1.5px var(--acc),0 3px 8px -2px rgba(16,24,40,.35)}
+  .player .tbar i{width:var(--pv,0%)}
+  .player .tbar b{left:var(--pv,0%)}
+  .clock{font-size:12.5px;font-weight:700;font-variant-numeric:tabular-nums;flex:0 0 auto;
+    white-space:nowrap}
+  .clock em{font-style:normal;color:var(--dim);font-weight:500;font-size:12px}
+
+  /* ---------- 模式卡 ---------- */
+  .modes{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
+  .mode{border:1px solid var(--line);border-radius:var(--r2);padding:18px;cursor:pointer;
+    background:var(--surf2);transition:.2s;position:relative}
+  .mode:hover{border-color:var(--line2);background:var(--surf);box-shadow:var(--sh2);transform:translateY(-2px)}
+  .mode.sel{border-color:var(--acc);background:var(--surf);box-shadow:0 0 0 3px var(--accSoft),var(--sh2)}
+  .mode.sel::after{content:"✓";position:absolute;top:12px;right:13px;font-size:13px;font-weight:800;
+    color:var(--acc)}
+  .mode-top{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .mode-ic{width:33px;height:33px;flex:0 0 33px;border-radius:10px;display:flex;align-items:center;
+    justify-content:center;font-size:16px;background:var(--surf3);border:1px solid var(--line)}
+  .mode.sel .mode-ic{background:var(--grad);border-color:transparent;color:#fff}
+  .mode-name{font-size:15px;font-weight:700}
+  .mode-tag{margin-left:auto;font-size:10.5px;padding:3px 9px;border-radius:999px;
+    background:var(--surf3);color:var(--sub);font-weight:600}
+  .mode.sel .mode-tag{background:var(--accSoft);color:var(--acc)}
+  .bars{display:flex;gap:4px;height:34px;align-items:flex-end;margin-bottom:13px}
+  .bars i{flex:1;border-radius:2px;background:var(--c);height:var(--h);opacity:.4}
+  .mode.sel .bars i{opacity:1}
+  .mode-desc{font-size:12.5px;color:var(--sub);line-height:1.6}
+
+  /* ---------- 格式 ---------- */
+  .fmts{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
+  .fmt{border:1px solid var(--line);border-radius:var(--r2);padding:15px 17px;cursor:pointer;
+    background:var(--surf2);transition:.18s;display:flex;align-items:center;gap:12px}
+  .fmt:hover{background:var(--surf);border-color:var(--line2)}
+  .fmt.sel{border-color:var(--acc);background:var(--surf);box-shadow:0 0 0 3px var(--accSoft)}
+  .fmt .rad{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--line2);flex:0 0 16px;
+    position:relative}
+  .fmt.sel .rad{border-color:var(--acc)}
+  .fmt.sel .rad::after{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--acc)}
+  .fmt .t{font-size:15px;font-weight:700}
+  .fmt .t .ext{font-size:10px;font-weight:600;color:var(--sub);background:var(--surf3);
+    border-radius:5px;padding:2px 6px;margin-left:7px;vertical-align:2px}
+  .fmt.sel .t .ext{color:var(--acc);background:var(--accSoft)}
+  .fmt .d{margin:0 0 0 auto;font-size:11px;color:var(--dim);text-align:right;line-height:1.5}
+
+  /* ── 导出选择弹窗：下载时才选格式 / 采样率 ── */
+  .dl-mask{position:fixed;inset:0;z-index:200;background:rgba(10,12,24,.46);
+    display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+  .dl-mask[hidden]{display:none}
+  .dl-box{background:var(--surf);color:var(--txt);border:1px solid var(--line);
+    border-radius:18px;padding:24px 26px;width:min(430px,92vw);box-shadow:0 24px 80px rgba(0,0,0,.28)}
+  .dl-box h3{margin:0 0 4px;font-size:17px;font-weight:800}
+  .dl-box .dl-sub{font-size:12px;color:var(--sub);margin-bottom:16px}
+  .dl-sec{font-size:12px;font-weight:700;color:var(--sub);margin:14px 0 8px}
+  .dl-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .dl-opts.two{grid-template-columns:repeat(2,1fr)}
+  .dl-op{border:1px solid var(--line);border-radius:12px;background:var(--surf2);color:var(--txt);
+    padding:12px 8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;text-align:center;
+    transition:border-color .15s, box-shadow .15s}
+  .dl-op i{display:block;font-style:normal;font-size:10.5px;font-weight:600;color:var(--dim);margin-top:3px}
+  .dl-op:hover{border-color:var(--line2)}
+  .dl-op.sel{border-color:var(--acc);background:var(--surf);box-shadow:0 0 0 3px var(--accSoft);color:var(--acc)}
+  .dl-op.sel i{color:var(--acc)}
+  .dl-btns{display:flex;gap:10px;margin-top:20px}
+  .dl-btns button{flex:1;padding:11px 0;border-radius:12px;font-size:14px;font-weight:700;
+    cursor:pointer;font-family:inherit}
+  .dl-cancel{border:1px solid var(--line);background:var(--surf2);color:var(--sub)}
+  .dl-cancel:hover{color:var(--txt)}
+  .dl-ok{border:none;background:var(--acc);color:#fff}
+  .dl-ok:hover{filter:brightness(1.08)}
+
+  /* ---------- 主按钮 ---------- */
+  .go{width:100%;margin-top:4px;border:0;border-radius:16px;padding:19px;cursor:pointer;
+    background:var(--grad);color:#fff;font-size:16.5px;font-weight:800;letter-spacing:2.5px;
+    box-shadow:0 18px 38px -18px var(--acc);transition:.18s;position:relative;overflow:hidden;
+    font-family:inherit}
+  .go::after{content:"";position:absolute;top:0;left:-60%;width:45%;height:100%;
+    background:linear-gradient(90deg,transparent,#ffffff66,transparent);transform:skewX(-18deg)}
+  .go:not(:disabled):hover::after{animation:sheen .9s ease}
+  .go:not(:disabled):hover{filter:brightness(1.06);transform:translateY(-1px)}
+  .go:disabled{opacity:.45;cursor:not-allowed}
+  @keyframes sheen{to{left:120%}}
+
+  /* ---------- 进度 ---------- */
+  .prog{display:none;margin-top:16px}
+  .prog.show{display:block}
+  .bar{height:8px;border-radius:5px;background:var(--surf3);overflow:hidden;border:1px solid var(--line)}
+  .bar>i{display:block;height:100%;width:0;border-radius:5px;transition:width .45s ease;
+    background:var(--grad)}
+  .pmsg{display:flex;justify-content:space-between;font-size:12px;color:var(--sub);margin-top:9px}
+
+  /* ================= 结果区（多轨播放器） ================= */
+  .result{display:none;margin-top:18px}
+  .result.show{display:block}
+
+  .transport{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:var(--surf);
+    border:1px solid var(--line);border-radius:var(--r);padding:14px 18px;box-shadow:var(--sh1);
+    margin-bottom:11px}
+  .tinfo{min-width:0}
+  .tinfo b{display:block;font-size:15px;font-weight:700}
+  .tinfo span{font-size:11.5px;color:var(--dim)}
+  .tact{margin-left:auto;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .tb{height:40px;padding:0 16px;border-radius:12px;border:1px solid var(--line2);background:var(--surf);
+    color:var(--sub);font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;
+    align-items:center;gap:7px;transition:.16s;box-shadow:var(--sh1);text-decoration:none;
+    white-space:nowrap;font-family:inherit}
+  .tb:hover{border-color:var(--acc);color:var(--acc)}
+  .tb.on{background:var(--accSoft);border-color:var(--acc);color:var(--acc)}
+  .tb.acc{background:var(--grad);border-color:transparent;color:#fff;font-weight:800;
+    box-shadow:0 12px 26px -12px var(--acc)}
+  .tb.acc:hover{filter:brightness(1.05);color:#fff}
+
+  /* MASTER 整包进度条 */
+  .master{display:flex;align-items:center;gap:15px;background:var(--surf);border:1px solid var(--line);
+    border-radius:var(--r);padding:12px 18px;box-shadow:var(--sh1);margin-bottom:12px}
+  .master .lbl{font-size:10.5px;letter-spacing:2px;color:var(--dim);font-weight:700;flex:0 0 auto}
+
+  /* ---------- 轨道行 ---------- */
+  .tracks{display:flex;flex-direction:column}
+  .tk{
+    display:grid;grid-template-columns:4px 34px 136px 62px 1fr 96px 34px;gap:11px;align-items:center;
+    background:var(--surf);border:1px solid var(--line);border-radius:var(--r2);padding:11px 13px;
+    margin-bottom:9px;box-shadow:var(--sh1);transition:.18s;
+  }
+  .tk:hover{box-shadow:var(--sh2);border-color:var(--line2)}
+  .tk.off{opacity:.55}
+  /* solo 聚焦：被独奏轨高亮，其余轨道（含波形）整体变暗 */
+  .tk.dim{opacity:.34;filter:saturate(.35)}
+  .tk.soloed{border-color:var(--acc);box-shadow:0 0 0 3px var(--accSoft),var(--sh2)}
+  /* 「这首歌里没有该乐器」的轨：灰显但仍然列出，让用户自己去确认不是导出失败 */
+  .tk.nosnd{opacity:.5;filter:saturate(.25)}
+  .tk.nosnd .ico{filter:grayscale(1)}
+  .tk.nosnd .nm b::after{content:' ⚠';font-size:11px;opacity:.75}
+  .tk .cbar{width:4px;height:34px;border-radius:2px;background:var(--c);flex:0 0 4px}
+  .tk .ico{width:34px;height:34px;flex:0 0 34px;border-radius:10px;display:flex;align-items:center;
+    justify-content:center;font-size:16px;background:color-mix(in srgb,var(--c) 11%,var(--surf));
+    border:1px solid color-mix(in srgb,var(--c) 26%,var(--surf))}
+  .tk .nm{min-width:0}
+  .tk .nm b{display:block;font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;
+    text-overflow:ellipsis}
+  .tk .nm span{display:block;font-size:10.5px;color:var(--dim);margin-top:2px;white-space:nowrap;
+    overflow:hidden;text-overflow:ellipsis}
+  .sm{display:flex;gap:5px;justify-content:flex-end}
+  .smb{width:28px;height:25px;border-radius:8px;border:1px solid var(--line2);background:var(--surf);
+    color:var(--sub);font-size:11px;font-weight:800;cursor:pointer;transition:.14s;padding:0;
+    display:flex;align-items:center;justify-content:center;font-family:inherit}
+  .smb:hover{border-color:var(--acc);color:var(--acc)}
+  .smb.s.on{background:#fef3c7;border-color:#f59e0b;color:#b45309}
+  .smb.m.on{background:#fee2e2;border-color:#ef4444;color:#b91c1c}
+
+  /* 轨道波形（浅底 + 刻度 + 进度填充 + 播放头） */
+  .wv{position:relative;height:62px;border-radius:var(--r3);overflow:hidden;cursor:crosshair;
+    background:var(--wave);border:1px solid var(--line);touch-action:none}
+  .wv:hover{border-color:var(--line2)}
+  .wv .grid{position:absolute;inset:0;pointer-events:none;
+    background-image:repeating-linear-gradient(90deg,rgba(21,24,33,.045) 0 1px,transparent 1px 10%)}
+  .wv canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .wv .over{clip-path:inset(0 calc(100% - var(--p)) 0 0)}
+  .wv .midline{position:absolute;left:0;right:0;top:50%;height:1px;background:rgba(21,24,33,.07)}
+  .wv .tk-head{position:absolute;top:0;bottom:0;left:var(--p);width:2px;margin-left:-1px;
+    background:var(--acc);pointer-events:none;opacity:0;transition:opacity .15s;z-index:4}
+  .wv:hover .tk-head,.wv.hot .tk-head{opacity:.9}
+  .wv .tk-tip{position:absolute;top:16px;transform:translateX(-50%);pointer-events:none;font-size:10px;
+    font-weight:700;color:#fff;background:rgba(21,24,33,.86);border-radius:5px;padding:2px 6px;
+    opacity:0;transition:opacity .12s;white-space:nowrap;font-variant-numeric:tabular-nums;z-index:5}
+  .wv:hover .tk-tip{opacity:1}
+  .wv .tk-load{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font-size:11px;color:var(--dim);letter-spacing:.5px}
+
+  /* 时间刻度（预览播放器与轨道共用） */
+  .tk-ruler{position:absolute;top:0;left:0;right:0;height:15px;pointer-events:none;z-index:2}
+  .tk-tick{position:absolute;top:1px;font-size:9px;color:#98a1b3;font-variant-numeric:tabular-nums;
+    white-space:nowrap}
+  .tk-tick::before{content:"";position:absolute;top:11px;left:50%;width:1px;height:5px;
+    background:rgba(21,24,33,.12)}
+
+  /* A-B 循环标记 */
+  .wv .loop-band{position:absolute;top:0;bottom:0;background:rgba(245,158,11,.14);
+    border-left:1px solid rgba(245,158,11,.5);border-right:1px solid rgba(245,158,11,.5);
+    pointer-events:none;display:none;z-index:1}
+  .wv .loop-a,.wv .loop-b{position:absolute;top:0;bottom:0;width:2px;background:#f59e0b;
+    pointer-events:none;display:none;z-index:3}
+  .wv .loop-a::after,.wv .loop-b::after{content:"";position:absolute;top:2px;left:-3px;width:8px;
+    height:8px;border-radius:50%;background:#f59e0b;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+  .wv .loop-b{background:var(--acc)}
+  .wv .loop-b::after{background:var(--acc)}
+
+  /* 音量推子（波形随音量缩放） */
+  .volbox{display:flex;flex-direction:column;gap:5px}
+  .volbox .vv{font-size:10px;color:var(--dim);text-align:right;font-variant-numeric:tabular-nums}
+  .tk-vol{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;
+    background:var(--surf3);outline:none;cursor:pointer}
+  .tk-vol::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;
+    background:var(--thumb);border:1.5px solid var(--c,#4f46e5);box-shadow:0 2px 5px -1px rgba(16,24,40,.3);
+    cursor:pointer}
+  .tk-vol::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:var(--thumb);
+    border:1.5px solid var(--c,#4f46e5);cursor:pointer}
+
+  .dl{width:34px;height:34px;border-radius:10px;border:1px solid var(--line2);background:var(--surf);
+    color:var(--acc);font-size:14px;cursor:pointer;display:flex;align-items:center;
+    justify-content:center;transition:.16s;padding:0;font-family:inherit}
+  .dl:hover{background:var(--accSoft);border-color:var(--accLine)}
+
+  .err{display:none;color:var(--red);font-size:12.8px;margin-top:14px;background:#fef2f2;
+    border:1px solid #fecaca;border-radius:var(--r2);padding:12px 15px;white-space:pre-wrap;
+    word-break:break-all}
+  .err.show{display:block}
+  .okline{font-size:12.8px;color:var(--sub);margin-top:14px;line-height:1.75}
+  .okline:empty{display:none}
+
+  /* ---------- 底部 ---------- */
+  footer{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:center;gap:7px;
+    text-align:center;font-size:11.5px;color:#98a1b3;margin-top:24px;line-height:1.9}
+  footer .fl b{color:var(--sub)}
+  footer .sep{color:var(--line2);font-size:11px}
+  .wechat{font-size:11px;color:#a8b0be;letter-spacing:.2px;white-space:nowrap;line-height:1.9}
+  .wechat b{color:var(--dim);font-weight:600;letter-spacing:.4px;font-variant-numeric:tabular-nums}
+
+  /* ---------- 乐器提取：目标乐器选择 ---------- */
+  .insbox{margin-top:14px;border:1px dashed var(--acc);border-radius:var(--r2);
+    background:var(--accSoft);padding:16px 16px 14px;animation:fadeUp .25s ease}
+  .insbox[hidden]{display:none}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+  .ins-hd{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+  .ins-hd .t{font-size:13.5px;font-weight:700}
+  .ins-hd .n{margin-left:auto;font-size:11.5px;color:var(--sub)}
+  .ins-hd .n b{color:var(--acc);font-variant-numeric:tabular-nums}
+  /* 模型未就绪时的引导卡 */
+  .inslock{display:flex;gap:13px;align-items:flex-start;background:var(--surf2);
+    border:1px solid var(--line);border-radius:var(--r2);padding:15px 16px}
+  .inslock[hidden]{display:none}
+  .inslock .ico{font-size:24px;line-height:1;flex:0 0 auto;margin-top:1px}
+  .inslock .body{flex:1;min-width:0}
+  .inslock .t{font-size:13.5px;font-weight:700;margin-bottom:4px}
+  .inslock .d{font-size:12.2px;color:var(--sub);line-height:1.72}
+  .inslock .d b{color:var(--acc);font-variant-numeric:tabular-nums}
+  .inslock .bar{height:7px;border-radius:4px;background:var(--surf3);overflow:hidden;margin-top:11px}
+  .inslock .bar[hidden]{display:none}
+  .inslock .bar i{display:block;height:100%;width:0;border-radius:4px;
+    background:var(--grad);transition:width .3s ease}
+  .inslock .txt{font-size:11.6px;color:var(--sub);margin-top:7px;font-variant-numeric:tabular-nums}
+  .inslock .txt[hidden]{display:none}
+  .inslock .txt.err{color:var(--red)}
+  .btn-install{margin-top:12px;padding:9px 17px;border:none;border-radius:10px;
+    background:var(--grad);color:#fff;font-size:12.6px;font-weight:700;cursor:pointer;
+    font-family:inherit;box-shadow:var(--sh)}
+  .btn-install:hover{filter:brightness(1.07)}
+  .btn-install:disabled{opacity:.55;cursor:default;filter:none}
+  .insgrp{margin-bottom:10px}
+  .insgrp:last-child{margin-bottom:0}
+  .insgrp .gl{font-size:11px;color:var(--dim);font-weight:700;letter-spacing:.5px;margin-bottom:6px}
+  .chips{display:flex;flex-wrap:wrap;gap:7px}
+  .chip{border:1px solid var(--line2);background:var(--surf);border-radius:999px;
+    padding:6px 13px;font-size:12.5px;font-weight:600;color:var(--sub);cursor:pointer;
+    transition:.15s;user-select:none}
+  .chip:hover{border-color:var(--acc);color:var(--tx)}
+  .chip.on{background:var(--grad);border-color:transparent;color:#fff;
+    box-shadow:0 2px 8px var(--accSoft)}
+  .ins-tip{margin-top:12px;padding-top:11px;border-top:1px solid var(--line);
+    font-size:11.5px;line-height:1.75;color:var(--dim)}
+  .ins-tip b{color:var(--sub)}
+  .pro-note{margin-top:12px;padding:11px 13px;border-radius:var(--r2);
+    background:rgba(99,102,241,.10);border:1px solid rgba(99,102,241,.32);
+    font-size:12px;line-height:1.8;color:var(--sub)}
+  .pro-note b{color:var(--acc)}
+
+  @media(max-width:900px){
+    .modes,.fmts{grid-template-columns:1fr}
+    .tk{grid-template-columns:4px 34px 1fr auto;grid-template-areas:
+      "c ico nm sm" "wv wv wv wv" "vol vol dl dl";row-gap:10px}
+    .tk .cbar{grid-area:c} .tk .ico{grid-area:ico} .tk .nm{grid-area:nm} .sm{grid-area:sm}
+    .wv{grid-area:wv} .volbox{grid-area:vol} .dl{grid-area:dl;justify-self:end}
+  }
+
+  /* ===== 登录门覆盖层（未登录时全屏接管）===== */
+  #gateOv{position:fixed;inset:0;z-index:999;display:flex;align-items:center;justify-content:center;background:var(--bg);padding:20px}
+  #gateOv[hidden]{display:none}
+  .gcard{width:min(92vw,380px);background:var(--surf);border:1px solid var(--line);border-radius:var(--r2);box-shadow:var(--sh3);padding:30px 28px;text-align:center}
+  .gcard .glogo{width:52px;height:52px;margin:0 auto 12px;border-radius:14px;overflow:hidden;box-shadow:0 10px 24px -12px var(--acc)}
+  .gcard .glogo svg,.gcard .glogo img{display:block;width:100%;height:100%;object-fit:cover}
+  .gcard h2{margin:0 0 6px;font-size:19px;color:var(--txt)}
+  .gsub{margin:0 0 18px;font-size:12.5px;color:var(--sub);line-height:1.6}
+  .gcard input{width:100%;box-sizing:border-box;margin-bottom:10px;padding:11px 13px;border:1px solid var(--line2);border-radius:10px;background:var(--surf2);color:var(--txt);font-size:14px;font-family:inherit;outline:none}
+  .gcard input:focus{border-color:var(--acc)}
+  .gerr{min-height:18px;font-size:12.5px;color:var(--red);margin-bottom:4px}
+  .gcard button[type=submit]{width:100%;padding:11px;border:none;border-radius:10px;background:var(--grad);color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
+  .gcard button[type=submit]:disabled{opacity:.6;cursor:default}
+  .greg{display:inline-block;margin-top:14px;font-size:12.5px;color:var(--acc);text-decoration:none}
+  .greg:hover{text-decoration:underline}
+  .gok{margin-top:12px;font-size:13px;color:#2E9E5B}
+  .gu{font-size:12px;color:var(--sub);max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .gout{font-size:12px;color:var(--sub);cursor:pointer;text-decoration:underline;background:none;border:none;font-family:inherit;padding:0}
+  .gout:hover{color:var(--txt)}
+  .costline{margin-top:11px;text-align:center;font-size:12px;color:var(--sub)}
+  .costline b{color:var(--acc);font-weight:700}
+</style>
+</head>
+<body>
+
+<!-- ===== 登录门 DOM：免费版已停用，始终隐藏；保留仅为日后可逆 ===== -->
+<div id="gateOv" hidden>
+  <div class="gcard">
+    <div class="glogo">
+      <img src="/logo.png" alt="Amu Music">
+    </div>
+    <h2>登录 Amu 账号</h2>
+    <p class="gsub">本软件需登录使用（注册免费，与官网同账号）。<br>音频文件仍全程在本机处理，不会上传。</p>
+    <form id="gateForm" autocomplete="on">
+      <input id="gEmail" type="email" placeholder="邮箱" autocomplete="username" required>
+      <input id="gPwd" type="password" placeholder="密码" autocomplete="current-password" required>
+      <div class="gerr" id="gErr"></div>
+      <button type="submit" id="gBtn">登 录</button>
+    </form>
+    <div class="gok" id="gOk" hidden>✓ 验证通过，正在进入…</div>
+    <a class="greg" href="https://user.amumusic.com/register" target="_blank" rel="noopener">没有账号？免费注册 →</a>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- ===== 品牌头部 ===== -->
+  <header>
+    <div class="logo" aria-label="Amu Music 标志">
+      <img src="/logo.png" alt="Amu Music">
+    </div>
+    <div class="brand">
+      <h1>Amu Music</h1>
+      <div class="tag">音频分离软件 <b>完整版 · 免费</b></div>
+    </div>
+    <div class="pill">
+      <span id="gatePts" class="on" title="所有功能开放：无积分、无次数限制">🟢 完全免费 · 无需登录</span>
+      <span id="gateUser" class="gu" hidden></span>
+      <button id="gateOut" class="gout" hidden>退出</button>
+      <span class="on">本地离线</span><span>GPU 加速</span>
+      <div class="ap" id="appear">
+        <button id="apBtn" class="ap-btn" aria-haspopup="true" aria-expanded="false" title="明暗与主题色">
+          <span class="ic">◐</span>外观
+        </button>
+        <div class="ap-menu" id="apMenu" hidden>
+          <div class="ap-cap">明暗</div>
+          <button class="ap-it" data-md="dark">暗色<span class="ck">√</span></button>
+          <button class="ap-it on" data-md="light">浅色<span class="ck">√</span></button>
+          <div class="ap-cap">主题色</div>
+          <button class="ap-it on" data-t="0"><i class="dot" style="--c:var(--sw0)"></i>暗金（默认）<span class="ck">√</span></button>
+          <button class="ap-it" data-t="1"><i class="dot" style="--c:var(--sw1)"></i>青蓝<span class="ck">√</span></button>
+          <button class="ap-it" data-t="2"><i class="dot" style="--c:var(--sw2)"></i>绛紫<span class="ck">√</span></button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 1 选择音频 -->
+  <div class="card">
+    <div class="step-head"><span class="num">1</span><h2>选择音频</h2>
+      <span class="hint">支持 mp3 / wav / flac / m4a / aiff</span></div>
+    <div class="drop" id="drop">
+      <div class="ic">⤒</div>
+      <div class="big">把音频拖到这里，或点击选择文件</div>
+      <div class="sm">文件只在你本机处理，不会上传到任何服务器</div>
+    </div>
+    <input type="file" id="file" accept="audio/*" hidden>
+    <div class="filechip" id="chip">
+      <span class="dot"></span><span class="fn" id="fname">—</span><span class="fs" id="fsize"></span>
+    </div>
+    <div class="player" id="preview">
+      <div class="plab" id="pvLab">波形预览</div>
+      <div class="wave" id="pvWave">
+        <div class="grid"></div>
+        <div class="tk-ruler" id="pvRuler"></div>
+        <canvas id="pvCanvas" class="base"></canvas>
+        <canvas id="pvOver" class="over"></canvas>
+        <div class="ph" id="pvHead"></div>
+      </div>
+      <div class="scrub">
+        <button class="pp" id="pvPlay" title="试听原始音频（播放时会自动静音下方分轨）">▶</button>
+        <div class="tbar" id="pvBar"><i></i><b></b></div>
+        <span class="clock" id="pvTime">00:00 / 00:00</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2 分离模式 -->
+  <div class="card">
+    <div class="step-head"><span class="num">2</span><h2>分离模式</h2>
+      <span class="hint">轨道越多越精细，耗时相应增加</span></div>
+    <div class="modes" id="modes">
+      <div class="mode sel" data-m="basic">
+        <div class="mode-top"><span class="mode-ic">🎙</span><span class="mode-name">基本模式</span><span class="mode-tag">极速</span></div>
+        <div class="bars"><i style="--c:#db2777;--h:78%"></i><i style="--c:#4f46e5;--h:100%"></i></div>
+        <div class="mode-desc">人声、伴奏</div>
+      </div>
+      <div class="mode" data-m="four">
+        <div class="mode-top"><span class="mode-ic">🎚</span><span class="mode-name">四轨模式</span><span class="mode-tag">精细</span></div>
+        <div class="bars">
+          <i style="--c:#db2777;--h:82%"></i><i style="--c:#d97706;--h:96%"></i>
+          <i style="--c:#2563eb;--h:70%"></i><i style="--c:#64748b;--h:58%"></i>
+        </div>
+        <div class="mode-desc">人声、贝斯、鼓、其他</div>
+      </div>
+      <div class="mode" data-m="multi">
+        <div class="mode-top"><span class="mode-ic">🎛</span><span class="mode-name">多轨模式</span><span class="mode-tag">最全</span></div>
+        <div class="bars">
+          <i style="--c:#db2777;--h:88%"></i><i style="--c:#0891b2;--h:56%"></i>
+          <i style="--c:#d97706;--h:96%"></i><i style="--c:#2563eb;--h:68%"></i>
+          <i style="--c:#059669;--h:62%"></i><i style="--c:#7c3aed;--h:74%"></i>
+          <i style="--c:#64748b;--h:52%"></i>
+        </div>
+        <div class="mode-desc">主唱、和声、贝斯、鼓、吉他、钢琴、其他</div>
+      </div>
+      <div class="mode" data-m="instruments">
+        <div class="mode-top"><span class="mode-ic">🎯</span><span class="mode-name">乐器提取</span><span class="mode-tag">按需</span></div>
+        <div class="bars">
+          <i style="--c:#f59e0b;--h:70%"></i><i style="--c:#10b981;--h:88%"></i>
+          <i style="--c:#3b82f6;--h:56%"></i><i style="--c:#8b5cf6;--h:64%"></i>
+          <i style="--c:#64748b;--h:44%"></i><i style="--c:#64748b;--h:38%"></i>
+        </div>
+        <div class="mode-desc">点名提取电吉他、木吉他、二胡、古筝等 50+ 类乐器（含民乐近似）</div>
+      </div>
+      <div class="mode" data-m="pro">
+        <div class="mode-top"><span class="mode-ic">🧩</span><span class="mode-name">全分离 Pro</span><span class="mode-tag">全拆</span></div>
+        <div class="bars">
+          <i style="--c:#f43f5e;--h:90%"></i><i style="--c:#fb923c;--h:74%"></i>
+          <i style="--c:#facc15;--h:64%"></i><i style="--c:#34d399;--h:82%"></i>
+          <i style="--c:#60a5fa;--h:70%"></i><i style="--c:#a78bfa;--h:60%"></i>
+        </div>
+        <div class="mode-desc">一键自动拆分全部乐器（含民乐 / 独奏），只保留有内容的音轨</div>
+      </div>
+    </div>
+
+    <!-- 乐器提取：目标乐器多选（选中该模式时展开） -->
+    <div class="insbox" id="insBox" hidden>
+      <div class="ins-hd">
+        <span class="t">🎯 选择要提取的乐器</span>
+        <span class="n">已选 <b id="insN">0</b> / <span id="insMax">6</span> 轨</span>
+      </div>
+      <!-- 模型未安装时的引导卡（已安装则自动隐藏） -->
+      <div class="inslock" id="insLock" hidden>
+        <div class="ico" id="insLockIco">📦</div>
+        <div class="body">
+          <div class="t" id="insLockT">需要安装识别模型</div>
+          <div class="d" id="insLockD">首次使用「乐器提取」需下载约 <b id="insNeedMB">1306</b> MB 模型，只需安装一次。下载失败可断点续传。</div>
+          <div class="bar" id="insDlBar" hidden><i id="insDlFill"></i></div>
+          <div class="txt" id="insDlTxt" hidden></div>
+          <button class="btn-install" id="btnInstallModel" type="button">安装模型（约 <span id="insNeedMB2">1306</span> MB）</button>
+        </div>
+      </div>
+      <div id="insGroups"></div>
+      <div class="pro-note" id="proNote" hidden>
+        🧩 <b>全分离 Pro</b>：将一次性提取全部乐器（含民乐 / 独奏），
+        跑完只保留这首歌里<b>确实有声音</b>的轨。耗时与单轨乐器提取相近（约数分钟），请耐心等待。
+      </div>
+      <div class="ins-tip">
+        <b>ℹ️ 说明</b><br>
+        · 每条轨都是<b>独立提取</b>的结果，把它们<b>相加不等于原曲</b>（模型设计如此，不是故障）。<br>
+        · 提取难度取决于原曲编曲：乐器越突出、越干净，效果越好；编曲密集时会残留其他声部。<br>
+        · 速度约为常规分离的 <b>3 倍</b>左右（一首 4 分钟歌曲约需 7 分钟），请留意进度条。
+      </div>
+    </div>
+  </div>
+
+  <!-- 3 分离质量 -->
+  <div class="card">
+    <div class="step-head"><span class="num">3</span><h2>分离质量</h2>
+      <span class="hint">档位越高杂音越少，耗时相应增加</span></div>
+    <div class="fmts" id="quals">
+      <div class="fmt" data-q="normal"><span class="rad"></span><div class="t">标准</div><div class="d">速度最快<br>偶有轻微杂音</div></div>
+      <div class="fmt sel" data-q="high"><span class="rad"></span><div class="t">高质 <span class="ext">推荐</span></div><div class="d">杂音明显减少<br>耗时约 1.8 倍</div></div>
+      <div class="fmt" data-q="max"><span class="rad"></span><div class="t">极致</div><div class="d">最干净<br>耗时约 4 倍</div></div>
+    </div>
+  </div>
+
+  <button class="go" id="go" disabled>开始分离</button>
+  <div class="costline" id="costline"><span id="freeNote">🟢 <b>完全免费</b> · 无需登录、无积分、无次数限制，打开即用</span><span id="payNote" hidden>⚡ 每次分离消耗 <b id="costNow">10</b> 积分（<b id="trkNow">2</b> 轨 × 5 积分/轨）· 当前余额 <b id="ptsNow">—</b><span id="costHint"></span>（积分在官网每日签到可获得）</span></div>
+
+  <div class="prog" id="prog">
+    <div class="bar"><i id="bar"></i></div>
+    <div class="pmsg"><span id="pstate">准备中…</span><span id="ptime"></span></div>
+  </div>
+
+  <div class="err" id="err"></div>
+  <div class="okline" id="okline"></div>
+
+  <!-- ===== 多轨播放器 ===== -->
+  <div class="result" id="result">
+    <div class="transport">
+      <button class="pp big" id="playBtn" title="播放 / 暂停（空格）">▶</button>
+      <button class="pp ghost" id="rewBtn" title="回到开头">⏮</button>
+      <div class="tinfo">
+        <b>多轨同步播放</b>
+        <span>点击波形定位 · S 独奏 · M 静音 · 空格播放 · 原曲与分轨互不叠加 · 试听引擎 v3（恒定音高）</span>
+      </div>
+      <div class="tact">
+        <button class="tb" id="loopBtn" title="循环区间：开启后点波形设 A/B 点">🔁 循环</button>
+        <a class="tb" id="expAud" href="#">仅可听轨</a>
+        <a class="tb acc" id="expall" href="#">⬇ 全部导出</a>
+      </div>
+    </div>
+
+    <div class="master">
+      <span class="lbl">MASTER</span>
+      <div class="tbar" id="masterBar"><i></i><b></b></div>
+      <span class="clock"><b id="tcur">00:00</b> <em>/ <span id="ttot">00:00</span></em></span>
+    </div>
+
+    <div class="tracks" id="tracks"></div>
+  </div>
+
+  <footer>
+    <span class="fl"><span class="b">Amu Music</span> · 音频分离软件 完整版</span>
+    <span class="sep">·</span>
+    <span class="wechat">合作 / 咨询微信：<b>347414939</b></span>
+  </footer>
+
+  <!-- ===== 导出弹窗：点下载时才选格式 / 采样率 ===== -->
+  <div class="dl-mask" id="dlMask" hidden>
+    <div class="dl-box" role="dialog" aria-label="选择导出格式">
+      <h3>选择导出格式</h3>
+      <div class="dl-sub">分离母版为 44.1 kHz 无损 WAV，导出时实时转换。放进 DAW 前请让采样率与工程一致，否则会变快、变调。</div>
+      <div class="dl-sec">输出格式</div>
+      <div class="dl-opts" id="dlFmt">
+        <button class="dl-op sel" data-f="wav">WAV <i>无损 · 最大</i></button>
+        <button class="dl-op" data-f="flac">FLAC <i>无损 · 省一半</i></button>
+        <button class="dl-op" data-f="mp3">MP3 <i>320k · 最小</i></button>
+      </div>
+      <div class="dl-sec">导出采样率</div>
+      <div class="dl-opts two" id="dlSr">
+        <button class="dl-op sel" data-s="44100">44.1 kHz <i>默认</i></button>
+        <button class="dl-op" data-s="48000">48 kHz <i>工程是 48k 就选这个</i></button>
+      </div>
+      <div class="dl-btns">
+        <button class="dl-cancel" id="dlCancel">取消</button>
+        <button class="dl-ok" id="dlGo">开始导出</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+/* 以下计费常量在免费版里不参与扣费，保留仅为日后可逆；
+   若改回商业版，必须与 app.py 的 COST_PER_TRACK / PRO_COST 保持一致。 */
+const COST_PER_TRACK = 5;
+const PRO_COST = 50;
+const MODE_TRACKS = { basic:2, four:4, multi:7 };  // 与 app.py 的 MODE_TRACKS 一致
+const MAX_TARGETS = 6;      // 乐器提取最多选几轨（与 separate_core.MAX_TARGETS 一致）
+
+/* 乐器提取的目标清单（key 必须与 separate_core.INSTRUMENT_TARGETS 完全一致）
+   ⚠️ 这份列表是实测标定过的：strings 是模型的兜底通道（会把整轨吉他复制一份），
+      已永久剔除；贝斯 / 钢琴由后端合并多个模型通道而来，不要改回单通道。 */
+const INSTRUMENT_TARGETS = [
+  // 吉他 / 节奏组
+  ['electric-guitar','电吉他','🎸'], ['acoustic-guitar','木吉他','🎸'],
+  ['bass','贝斯','🎸'], ['drums','鼓组','🥁'], ['percussion','打击乐','🥁'],
+  // 键盘
+  ['piano','钢琴','🎹'], ['keys','键盘/合成器','🎛'], ['harpsichord','羽管键琴','🎹'],
+  // 人声
+  ['lead-vocal','主唱人声','🎤'], ['back-vocal','和声人声','🎙'],
+  // 弦乐
+  ['violin','小提琴','🎻'], ['cello','大提琴','🎻'], ['harp','竖琴','🎼'],
+  ['viola','中提琴','🎻'], ['strings','弦乐群','🎻'], ['bowed_strings','弓弦群','🎻'],
+  // 管乐
+  ['saxophone','萨克斯','🎷'], ['trumpet','小号','🎺'], ['trombone','长号','🎺'],
+  ['flute','长笛','🎶'], ['clarinet','单簧管','🎶'], ['french-horn','圆号','🎺'],
+  ['oboe','双簧管','🎶'], ['tuba','大号','🎺'], ['bassoon','巴松管','🎶'],
+  ['brass','铜管群','🎺'], ['woodwind','木管群','🎶'],
+  // 打击乐 / 鼓件
+  ['marimba','马林巴','🎼'], ['timpani','定音鼓','🥁'], ['glockenspiel','钟琴','🔔'],
+  ['bells','钟/铃','🔔'], ['tambourine','铃鼓','🪘'], ['congas','康加鼓','🪘'],
+  ['triangle','三角铁','🔔'], ['wind-chimes','风铃','🎐'], ['kick','底鼓','🥁'],
+  ['snare','军鼓','🥁'], ['hh','踩镲','🥁'], ['toms','桶鼓','🥁'],
+  // 其他西洋乐器
+  ['accordion','手风琴','🪗'], ['harmonica','口琴','🎵'], ['mandolin','曼陀林','🪕'],
+  ['banjo','班卓琴','🪕'], ['ukulele','尤克里里','🎸'], ['dobro','多布罗琴','🎸'],
+  ['sitar','西塔琴','🪕'],
+  // 民乐近似（模型无专门民乐训练，从最接近音轨提取，质量非专门级）
+  ['erhu','二胡(近似)','🎻'], ['matouqin','马头琴(近似)','🎻'],
+  ['guzheng','古筝(近似)','🎼'], ['pipa','琵琶(近似)','🎼'], ['ruan','阮(近似)','🎼'],
+  ['guqin','古琴(近似)','🎼'], ['yangqin','扬琴(近似)','🎼'],
+  ['dizi','笛子/箫(近似)','🎶'], ['suona','唢呐(近似)','🎺'],
+  ['sheng','笙(近似)','🎛'], ['hulusi','葫芦丝/巴乌(近似)','🎶'],
+  ['luogu','锣鼓(近似)','🥁'],
+];
+const INSTRUMENT_MAX = 6;
+/* 界面分组（便于快速找到想要的乐器） */
+const INSTRUMENT_GROUPS = [
+  ['吉他 / 节奏组', 0, 5], ['键盘', 5, 8], ['人声', 8, 10],
+  ['弦乐', 10, 16], ['管乐', 16, 27], ['打击乐 / 鼓件', 27, 39],
+  ['其他西洋乐器', 39, 46], ['民乐近似 · 从最接近音轨提取', 46, 58],
+];
+/* mode → 本次计入的轨数；乐器提取按勾选数量动态计 */
+function tracksOf(m){
+  if(m === 'instruments') return Math.max(1, targets.length);
+  return MODE_TRACKS[m] || MODE_TRACKS.basic;
+}
+const costOf = m => (m === 'pro') ? PRO_COST : COST_PER_TRACK * tracksOf(m);
+let targets = [];   // 乐器提取：用户勾选的目标乐器（模型通道名）
+
+/* ═══════════ 运行登录门（先验证账号，再放行主功能）═══════════ */
+const gateOv = $('#gateOv'), gateForm = $('#gateForm'),
+      gEmail = $('#gEmail'), gPwd = $('#gPwd'), gErr = $('#gErr'),
+      gBtn = $('#gBtn'), gOk = $('#gOk'),
+      gateUser = $('#gateUser'), gateOut = $('#gateOut'),
+      gatePts = $('#gatePts'), ptsNow = $('#ptsNow');
+
+/* 完全免费版（2026-11-14 用户定调）：默认即无门槛，服务端 /api/gate/status
+   的 free 字段为准；首屏先按免费渲染，避免 JS 加载前闪出积分 / 登录信息。 */
+let FREE = true;
+
+/* 积分余额实时显示：头部徽章 + 按钮下计费行，两处同步 */
+function setPts(n){
+  if(FREE){
+    gatePts.textContent = '🟢 完全免费 · 无需登录';
+    gatePts.title = '所有功能开放：无积分、无次数限制、无需联网验活';
+    gatePts.hidden = false;
+    return;
+  }
+  if(n === undefined || n === null){ return; }
+  gatePts.textContent = '⚡ ' + n + ' 积分';
+  gatePts.hidden = false;
+  if(ptsNow) ptsNow.textContent = n;
+}
+
+/* 免费 / 计费两套文案切换：默认免费。日后若把后端 FREE_MODE 改回 False，
+   这里会自动把计费行显示回来，不需要重写前端。 */
+function applyFreeModeUI(){
+  const fn = $('#freeNote'), pn = $('#payNote');
+  if(fn) fn.hidden = !FREE;
+  if(pn) pn.hidden = FREE;
+  const cl2 = $('#costHint'); if(cl2) cl2.textContent = '';
+}
+
+/* 计费行：轨数 × 每轨单价，随模式 / 乐器勾选实时更新 */
+function updateCost(){
+  const c = costOf(mode);
+  const cEl = $('#costNow'), tEl = $('#trkNow'), hEl = $('#costHint');
+  if(cEl) cEl.textContent = c;
+  if(tEl) tEl.textContent = (mode === 'pro') ? '全分离' : tracksOf(mode);
+  if(hEl){
+    hEl.textContent = (mode === 'instruments' && targets.length >= INSTRUMENT_MAX) ? '（已达本模式上限）'
+                    : (mode === 'pro' ? '（一次全拆统一价）' : '');
+  }
+  if(gatePts && !FREE) gatePts.title = '当前积分余额（本次分离将消耗 ' + c + ' 积分）';
+}
+
+/* ═══════════ 乐器提取：目标乐器多选 ═══════════ */
+const insBox = $('#insBox'), insGroups = $('#insGroups'), insN = $('#insN'), proNote = $('#proNote');
+const insLock = $('#insLock'), insLockT = $('#insLockT'), insLockD = $('#insLockD'),
+      insLockIco = $('#insLockIco'), insNeedMB = $('#insNeedMB'),
+      insNeedMB2 = $('#insNeedMB2'), insDlBar = $('#insDlBar'),
+      insDlFill = $('#insDlFill'), insDlTxt = $('#insDlTxt'),
+      btnInstall = $('#btnInstallModel');
+
+/* 分离模型（53 轨）是否可用。未安装时锁住乐器选择，避免用户白跑一趟 */
+let insReady = true, insChecking = false;
+
+function setInsLockState(){
+  if(!insLock) return;
+  insLock.hidden = insReady;
+  if(insGroups) insGroups.style.display = insReady ? '' : 'none';
+  syncGo();
+}
+
+function paintDl(st){
+  const pr = st && st.progress ? st.progress : null;
+  if(!pr || !insDlBar) return;
+  const active = !!pr.active;
+  insDlBar.hidden = !(active || (pr.done && pr.ok));
+  insDlTxt.hidden = !insDlBar.hidden;
+  const stageTxt = {config:'下载配置…', weights:'下载模型…',
+                    verify:'校验完整性…', ready:'完成', error:'失败'}[pr.stage] || '';
+  if(active){
+    const got = (pr.got / 1048576).toFixed(0), tot = (pr.total / 1048576).toFixed(0);
+    insDlFill.style.width = pr.percent + '%';
+    insDlTxt.classList.remove('err');
+    insDlTxt.textContent = `${stageTxt} ${pr.percent}% （${got} / ${tot} MB，${pr.speed} MB/s）`;
+    btnInstall.disabled = true;
+    btnInstall.textContent = '下载中…';
+  } else if(pr.done){
+    if(pr.ok){
+      insDlFill.style.width = '100%';
+      insDlTxt.classList.remove('err');
+      insDlTxt.textContent = '安装完成，正在启用…';
+      insReady = true;
+      setInsLockState();
+    } else {
+      insDlTxt.classList.add('err');
+      insDlTxt.textContent = '❌ ' + (pr.error || '下载失败') + '（已下载的部分会保留，可直接重试）';
+      btnInstall.disabled = false;
+      btnInstall.textContent = '重新下载';
+    }
+  }
+}
+
+async function checkInsModel(){
+  if(insChecking || typeof fetch !== 'function') return;
+  insChecking = true;
+  try{
+    const r = await fetch('/api/instrument-model', {cache:'no-store'});
+    if(r.status === 401){ insChecking = false; return; }   // 未登录，等解锁后再试
+    const st = await r.json();
+    insReady = !!st.ready;
+    if(st.need_mb){
+      if(insNeedMB) insNeedMB.textContent = st.need_mb;
+      if(insNeedMB2) insNeedMB2.textContent = st.need_mb;
+    }
+    if(!insReady && st.check_msg){
+      insLockT.textContent = '模型文件异常';
+      insLockD.innerHTML = String(st.check_msg).replace(/</g, '&lt;');
+      if(insLockIco) insLockIco.textContent = '⚠️';
+      btnInstall.textContent = '重新下载';
+    }
+    setInsLockState();
+    if(st.downloading || (st.progress && st.progress.active)){
+      insReady = false; setInsLockState(); pollInstall();
+    } else if(st.progress && st.progress.done){
+      paintDl(st);
+    }
+  } catch(e){ /* 网络/服务未起时忽略，保持原状 */ }
+  insChecking = false;
+}
+
+let pollTimer = null;
+function pollInstall(){
+  if(pollTimer) clearInterval(pollTimer);
+  pollTimer = setInterval(async () => {
+    try{
+      const st = await (await fetch('/api/instrument-model', {cache:'no-store'})).json();
+      paintDl(st);
+      if(st.ready){ clearInterval(pollTimer); pollTimer = null; checkInsModel(); }
+      if(st.progress && st.progress.done && !st.progress.ok){
+        clearInterval(pollTimer); pollTimer = null;
+      }
+    } catch(e){ /* 忽略单次抖动 */ }
+  }, 1000);
+}
+
+if(btnInstall) btnInstall.addEventListener('click', async () => {
+  btnInstall.disabled = true;
+  btnInstall.textContent = '正在连接…';
+  if(insDlTxt){ insDlTxt.hidden = false; insDlTxt.classList.remove('err');
+                insDlTxt.textContent = '正在准备…'; }
+  try{
+    const st = await (await fetch('/api/instrument-model/install',
+      {method:'POST'})).json();
+    paintDl(st);
+    pollInstall();
+  } catch(e){
+    if(insDlTxt){ insDlTxt.hidden = false; insDlTxt.classList.add('err');
+                  insDlTxt.textContent = '❌ 无法连接服务，请检查软件是否正常运行'; }
+    btnInstall.disabled = false;
+    btnInstall.textContent = '重试';
+  }
+});
+
+function syncGo(){
+  const goEl = $('#go'); if(!goEl) return;
+  if(mode === 'instruments')
+    goEl.disabled = (targets.length === 0 || !insReady) || !picked;   // 至少勾一个 + 模型已装
+  else if(mode === 'pro')
+    goEl.disabled = !insReady || !picked;                             // 全分离需模型已装（无需勾选）
+  else
+    goEl.disabled = !picked;
+}
+(function buildInsChips(){
+  if(!insGroups) return;
+  insGroups.innerHTML = '';
+  INSTRUMENT_GROUPS.forEach(([gname, a, b]) => {
+    const g = document.createElement('div'); g.className = 'insgrp';
+    const gl = document.createElement('div'); gl.className = 'gl'; gl.textContent = gname;
+    const cs = document.createElement('div'); cs.className = 'chips';
+    INSTRUMENT_TARGETS.slice(a, b).forEach(([key, zh]) => {
+      const c = document.createElement('span');
+      c.className = 'chip'; c.dataset.k = key; c.textContent = zh;
+      c.addEventListener('click', () => {
+        const i = targets.indexOf(key);
+        if(i >= 0){ targets.splice(i, 1); c.classList.remove('on'); }
+        else if(targets.length >= INSTRUMENT_MAX){ pulseLimit(); return; }
+        else { targets.push(key); c.classList.add('on'); }
+        insN.textContent = targets.length;
+        updateCost();
+        syncGo();
+      });
+      cs.appendChild(c);
+    });
+    g.append(gl, cs); insGroups.appendChild(g);
+  });
+})();
+function pulseLimit(){
+  if(!insN) return;
+  insN.style.color = '#ef4444'; insN.style.fontWeight = '800';
+  setTimeout(() => { insN.style.color = ''; insN.style.fontWeight = ''; }, 900);
+}
+
+function applyGate(d){
+  /* 服务端是权威：明确返回 free:false 才恢复门槛；没返回 / 请求失败时
+     保持默认免费，绝不让用户看到已经取消的登录 / 积分界面。 */
+  FREE = (d && typeof d.free !== 'undefined') ? !!d.free : true;
+  applyFreeModeUI();
+  if(d && d.ok){
+    gateOv.hidden = true;                 // 免费版永不显示登录遮罩
+    const u = d.user || {};
+    const who = u.nickname || u.email || '';
+    gateUser.textContent = '👤 ' + who;
+    gateUser.hidden = FREE;              // 免费版不显示账号信息
+    gateOut.hidden = FREE;               // 免费版没有登录态，不显示「退出」
+    setPts(u.points);
+    checkInsModel();
+  }else if(!FREE){
+    gateOv.hidden = false;
+    gateUser.hidden = true;
+    gateOut.hidden = true;
+    gErr.textContent = (d && d.reason === 'offline')
+      ? '离线宽限已超时，请联网重新登录'
+      : (d && d.reason === 'grace' ? '' : '');
+  }else{
+    gateOv.hidden = true;                // 兜底：免费版任何情况下都不设门槛
+    gateUser.hidden = true;
+    gateOut.hidden = true;
+  }
+}
+async function gateStatus(){
+  try{ applyGate(await (await fetch('/api/gate/status')).json()); }
+  catch(e){ /* 服务没起来时页面也用不了，静默 */ }
+}
+gateForm.addEventListener('submit', async e=>{
+  e.preventDefault();
+  gBtn.disabled = true; gErr.textContent = '';
+  try{
+    const r = await fetch('/api/gate/login', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({email: gEmail.value.trim(), password: gPwd.value})});
+    const d = await r.json().catch(()=>({}));
+    if(r.ok && d.ok){
+      gOk.hidden = false;
+      const lu = d.user || {};
+      gateUser.textContent = '👤 ' + (lu.nickname || lu.email || '');
+      gateUser.hidden = false; gateOut.hidden = false;
+      setPts(lu.points);
+      gateOv.hidden = true;
+    }else{
+      gErr.textContent = d.error || '登录失败，请稍后再试';
+    }
+  }catch(err){ gErr.textContent = '网络错误，请检查网络后重试'; }
+  gBtn.disabled = false;
+});
+gateOut.addEventListener('click', async ()=>{
+  try{ await fetch('/api/gate/logout', {method:'POST'}); }catch(e){}
+  location.reload();
+});
+gateStatus();
+/* ═══════════ 登录门结束 ═══════════ */
+
+const drop = $('#drop'), fileInput = $('#file'), chip = $('#chip');
+const go = $('#go'), prog = $('#prog'), bar = $('#bar'), pstate = $('#pstate'), ptime = $('#ptime');
+const errBox = $('#err'), okline = $('#okline'), resultBox = $('#result'), tracksEl = $('#tracks');
+const playBtn = $('#playBtn'), rewBtn = $('#rewBtn'), tcur = $('#tcur'), ttot = $('#ttot');
+const expall = $('#expall'), expAud = $('#expAud'), loopBtn = $('#loopBtn');
+const pvBox = $('#preview'), pvCvBase = $('#pvCanvas'), pvCvOver = $('#pvOver');
+const pvPlay = $('#pvPlay'), pvTime = $('#pvTime'), pvHead = $('#pvHead');
+const pvWaveEl = $('#pvWave'), pvBarEl = $('#pvBar'), pvRulerEl = $('#pvRuler');
+const masterBar = $('#masterBar');
+
+let picked = null, mode = 'basic', qual = 'high', job = null, timer = null;
+let jobCost = 0;   // 后端返回的实扣积分（免费版恒为 0，完成提示不再显示）
+/* 导出弹窗状态：dlFmt / dlSr 由用户在下载时选择，dlTarget 记录「下载哪条」 */
+let dlFmt = 'wav', dlSr = 44100, dlTarget = null;
+const dlMask = $('#dlMask');
+let players = [], dur = 0, playing = false, rafId = null, refP = null;
+let loopA = null, loopB = null, loopOn = false;
+let pvAudio = null, pvUrl = null, pvDur = 0, pvPeaks = null, pvRaf = null;
+
+const META = {
+  vocals:     { zh:'人声',     c:'#f472b6', ico:'🎤' },
+  lead:       { zh:'主唱',     c:'#f472b6', ico:'🎤' },
+  harmony:    { zh:'和声',     c:'#0891b2', ico:'🎙' },
+  no_vocals:  { zh:'伴奏',     c:'#34f5d3', ico:'🎼' },
+  drums:      { zh:'鼓',       c:'#ffc857', ico:'🥁' },
+  bass:       { zh:'贝斯',     c:'#60a5fa', ico:'🎸' },
+  guitar:     { zh:'吉他',     c:'#34d399', ico:'🎸' },
+  piano:      { zh:'钢琴',     c:'#a78bfa', ico:'🎹' },
+  other:      { zh:'其他',     c:'#94a3b8', ico:'🎹' },
+  /* 乐器提取模式的目标轨（key = 界面选项名，与后端 INSTRUMENT_TARGETS 一致）
+     ⚠️ 已按实测标定表同步：strings 已剔除，电钢琴/管风琴/合成器合并为「键盘/合成器」 */
+  'electric-guitar': { zh:'电吉他',   c:'#f59e0b', ico:'🎸' },
+  'acoustic-guitar': { zh:'木吉他',   c:'#34d399', ico:'🎸' },
+  percussion: { zh:'打击乐',   c:'#facc15', ico:'🪘' },
+  keys:       { zh:'键盘/合成器', c:'#22d3ee', ico:'🎛' },
+  'lead-vocal': { zh:'主唱人声', c:'#f472b6', ico:'🎤' },
+  'back-vocal': { zh:'和声人声', c:'#38bdf8', ico:'🎙' },
+  violin:     { zh:'小提琴',   c:'#fdba74', ico:'🎻' },
+  cello:      { zh:'大提琴',   c:'#f97316', ico:'🎻' },
+  harp:       { zh:'竖琴',     c:'#5eead4', ico:'🎼' },
+  saxophone:  { zh:'萨克斯',   c:'#c084fc', ico:'🎷' },
+  trumpet:    { zh:'小号',     c:'#fbbf24', ico:'🎺' },
+  trombone:   { zh:'长号',     c:'#fcd34d', ico:'🎺' },
+  flute:      { zh:'长笛',     c:'#7dd3fc', ico:'🎶' },
+  clarinet:   { zh:'单簧管',   c:'#93c5fd', ico:'🎶' },
+  /* 扩展乐器（与后端 INSTRUMENT_TARGETS 同步；民乐近似统一用偏红配色提示非专门级） */
+  harpsichord:{ zh:'羽管键琴', c:'#c4b5fd', ico:'🎹' },
+  viola:      { zh:'中提琴',   c:'#fb923c', ico:'🎻' },
+  strings:    { zh:'弦乐群',   c:'#fcd34d', ico:'🎻' },
+  bowed_strings:{ zh:'弓弦群', c:'#fbbf24', ico:'🎻' },
+  'french-horn':{ zh:'圆号',   c:'#fcd34d', ico:'🎺' },
+  oboe:       { zh:'双簧管',   c:'#93c5fd', ico:'🎶' },
+  tuba:       { zh:'大号',     c:'#fbbf24', ico:'🎺' },
+  bassoon:    { zh:'巴松管',   c:'#93c5fd', ico:'🎶' },
+  brass:      { zh:'铜管群',   c:'#fbbf24', ico:'🎺' },
+  woodwind:   { zh:'木管群',   c:'#93c5fd', ico:'🎶' },
+  marimba:    { zh:'马林巴',   c:'#5eead4', ico:'🎼' },
+  timpani:    { zh:'定音鼓',   c:'#ffc857', ico:'🥁' },
+  glockenspiel:{ zh:'钟琴',    c:'#fde68a', ico:'🔔' },
+  bells:      { zh:'钟/铃',    c:'#fde68a', ico:'🔔' },
+  tambourine: { zh:'铃鼓',     c:'#facc15', ico:'🪘' },
+  congas:     { zh:'康加鼓',   c:'#facc15', ico:'🪘' },
+  triangle:   { zh:'三角铁',   c:'#fde68a', ico:'🔔' },
+  'wind-chimes':{ zh:'风铃',   c:'#a5f3fc', ico:'🎐' },
+  kick:       { zh:'底鼓',     c:'#ffc857', ico:'🥁' },
+  snare:      { zh:'军鼓',     c:'#ffc857', ico:'🥁' },
+  hh:         { zh:'踩镲',     c:'#ffc857', ico:'🥁' },
+  toms:       { zh:'桶鼓',     c:'#ffc857', ico:'🥁' },
+  accordion:  { zh:'手风琴',   c:'#f472b6', ico:'🪗' },
+  harmonica:  { zh:'口琴',     c:'#f472b6', ico:'🎵' },
+  mandolin:   { zh:'曼陀林',   c:'#34d399', ico:'🪕' },
+  banjo:      { zh:'班卓琴',   c:'#34d399', ico:'🪕' },
+  ukulele:    { zh:'尤克里里', c:'#34d399', ico:'🎸' },
+  dobro:      { zh:'多布罗琴', c:'#34d399', ico:'🎸' },
+  sitar:      { zh:'西塔琴',   c:'#34d399', ico:'🪕' },
+  /* 民乐近似：偏红配色，提示非专门训练 */
+  erhu:       { zh:'二胡(近似)',     c:'#f87171', ico:'🎻' },
+  matouqin:   { zh:'马头琴(近似)',   c:'#f87171', ico:'🎻' },
+  guzheng:    { zh:'古筝(近似)',     c:'#f87171', ico:'🎼' },
+  pipa:       { zh:'琵琶(近似)',     c:'#f87171', ico:'🎼' },
+  ruan:       { zh:'阮(近似)',       c:'#f87171', ico:'🎼' },
+  guqin:      { zh:'古琴(近似)',     c:'#f87171', ico:'🎼' },
+  yangqin:    { zh:'扬琴(近似)',     c:'#f87171', ico:'🎼' },
+  dizi:       { zh:'笛子/箫(近似)',  c:'#f87171', ico:'🎶' },
+  suona:      { zh:'唢呐(近似)',     c:'#f87171', ico:'🎺' },
+  sheng:      { zh:'笙(近似)',       c:'#f87171', ico:'🎛' },
+  hulusi:     { zh:'葫芦丝/巴乌(近似)', c:'#f87171', ico:'🎶' },
+  luogu:      { zh:'锣鼓(近似)',     c:'#f87171', ico:'🥁' },
+};
+
+/* ================= 选择文件 ================= */
+drop.addEventListener('click', () => fileInput.click());
+drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('hot'); });
+drop.addEventListener('dragleave', () => drop.classList.remove('hot'));
+drop.addEventListener('drop', e => {
+  e.preventDefault(); drop.classList.remove('hot');
+  if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]);
+});
+fileInput.addEventListener('change', () => { if (fileInput.files[0]) setFile(fileInput.files[0]); });
+
+function setFile(f){
+  picked = f;
+  $('#fname').textContent = f.name;
+  $('#fsize').textContent = (f.size/1048576).toFixed(1) + ' MB';
+  chip.classList.add('show');
+  syncGo();   // 乐器提取模式下还需勾至少一个乐器才能开始
+  previewLocalWave(f);
+}
+
+/* --- 本地即时波形预览（Web Audio 解码，不上传） --- */
+async function previewLocalWave(f){
+  const box = $('#preview'), lab = $('#pvLab');
+  if (f.size > 160*1048576 || !(window.AudioContext || window.webkitAudioContext)) return;
+  try{
+    lab.textContent = '波形预览 · 解码中…';
+    const buf = await f.arrayBuffer();
+    const AC = window.AudioContext || window.webkitAudioContext;
+    const ac = new AC();
+    const audio = await new Promise((res, rej) => ac.decodeAudioData(buf, res, rej));
+    ac.close();
+    const ch = audio.getChannelData(0);
+    const buckets = 1400, step = Math.max(1, Math.floor(ch.length / buckets));
+    const pk = new Float32Array(buckets);
+    let mx = 0;
+    for (let b = 0; b < buckets; b++){
+      let v = 0;
+      const s = b*step, e = Math.min(ch.length, s+step);
+      for (let i = s; i < e; i += 3){ const a = Math.abs(ch[i]); if (a > v) v = a; }
+      pk[b] = v; if (v > mx) mx = v;
+    }
+    if (mx > 0) for (let b = 0; b < buckets; b++) pk[b] /= mx;
+    pvPeaks = pk; pvDur = audio.duration || 0;
+    box.classList.add('show');
+    drawPvWave();
+    layoutPvRuler();
+    lab.textContent = '波形预览 · ' + fmtTime(pvDur) + ' · ' + audio.sampleRate + ' Hz';
+    setupPvAudio(f);
+    setPvProgress(0);
+  }catch(err){
+    box.classList.remove('show');
+  }
+}
+
+/* --- 原始音频播放器（上传卡片内，直接播放本地文件，不上传） --- */
+function drawPvWave(){
+  if(!pvPeaks || !pvPeaks.length) return;
+  const cs = getComputedStyle(document.documentElement);
+  const cOver = cs.getPropertyValue('--acc').trim() || '#4f46e5';
+  const cBase = cs.getPropertyValue('--waveBase').trim() || '#ccd3e2';
+  const dpr = window.devicePixelRatio || 1;
+  const w = pvWaveEl.clientWidth, h = pvWaveEl.clientHeight;
+  if(w < 2 || h < 2) return;
+  [[pvCvBase, cBase, .9], [pvCvOver, cOver, 1]].forEach(([cv, color, a]) => {
+    cv.width = Math.max(1, Math.round(w*dpr));
+    cv.height = Math.max(1, Math.round(h*dpr));
+    const g = cv.getContext('2d');
+    g.setTransform(dpr,0,0,dpr,0,0);
+    g.clearRect(0,0,w,h);
+    paintWave(g, pvPeaks, w, h, color, a, false, 1);
+  });
+}
+function setupPvAudio(f){
+  try{
+    if(pvAudio){ pvAudio.pause(); pvAudio.removeAttribute('src'); pvAudio.load(); }
+    if(pvUrl) URL.revokeObjectURL(pvUrl);
+    pvUrl = URL.createObjectURL(f);
+    pvAudio = new Audio(pvUrl);
+    pvAudio.preload = 'auto';
+    pvAudio.addEventListener('play', () => {
+      if(playing) pauseAll();          /* 互斥：原曲开声 → 下方分轨全部静音 */
+      pvPlay.textContent = '⏸';
+      if(!pvRaf) pvRaf = requestAnimationFrame(pvLoop);
+    });
+    pvAudio.addEventListener('pause', () => {
+      pvPlay.textContent = '▶';
+      if(pvRaf){ cancelAnimationFrame(pvRaf); pvRaf = null; }
+    });
+    pvAudio.addEventListener('ended', () => {
+      pvPlay.textContent = '▶';
+      if(pvRaf){ cancelAnimationFrame(pvRaf); pvRaf = null; }
+      setPvProgress(pvDur);
+    });
+    pvPlay.textContent = '▶';
+    pvTime.textContent = '00:00 / ' + fmtTime(pvDur);
+  }catch(e){ pvAudio = null; }
+}
+function pvLoop(){
+  if(!pvAudio || pvAudio.paused){ pvRaf = null; return; }
+  setPvProgress(pvAudio.currentTime);
+  pvRaf = requestAnimationFrame(pvLoop);
+}
+function setPvProgress(t){
+  const pct = pvDur > 0 ? Math.max(0, Math.min(100, t/pvDur*100)) : 0;
+  pvBox.style.setProperty('--pv', pct + '%');
+  pvTime.textContent = fmtTime(t) + ' / ' + fmtTime(pvDur);
+}
+/* 波形区 / 进度条：点任意位置定位并播放（原曲与分轨互斥，开声前先停分轨） */
+[pvWaveEl, pvBarEl].forEach(el => el.addEventListener('pointerdown', e => {
+  if(!pvAudio || !pvDur) return;
+  e.preventDefault();
+  const seek = cx => {
+    const r = el.getBoundingClientRect();
+    const rel = Math.max(0, Math.min(1, (cx - r.left) / r.width));
+    pvAudio.currentTime = rel * pvDur;
+    setPvProgress(rel * pvDur);
+  };
+  pauseAll();                       /* 互斥：原曲要出声 → 下方分轨全部停 */
+  seek(e.clientX);
+  pvAudio.play().catch(() => {});
+  const mv = ev => seek(ev.clientX);
+  const up = () => {
+    window.removeEventListener('pointermove', mv);
+    window.removeEventListener('pointerup', up);
+  };
+  window.addEventListener('pointermove', mv);
+  window.addEventListener('pointerup', up);
+}));
+pvPlay.addEventListener('click', e => {
+  e.stopPropagation();
+  if(!pvAudio) return;
+  if(pvAudio.paused){ pauseAll(); pvAudio.play().catch(() => {}); }
+  else pvAudio.pause();
+});
+
+/* ================= 模式 / 格式 ================= */
+$('#modes').addEventListener('click', e => {
+  const o = e.target.closest('.mode'); if(!o) return;
+  [...$('#modes').children].forEach(c => c.classList.remove('sel'));
+  o.classList.add('sel'); mode = o.dataset.m;
+  // 乐器提取 / 全分离 Pro 都需要 53 轨模型，且共用同一个展开面板
+  const needModel = (mode === 'instruments' || mode === 'pro');
+  if(insBox) insBox.hidden = !needModel;
+  if(needModel){
+    checkInsModel();                              // 切进来才查，避免无谓请求
+    insGroups.hidden = (mode === 'pro');          // Pro 不显示逐乐器勾选
+    if(proNote) proNote.hidden = (mode !== 'pro');
+  }
+  updateCost();
+  syncGo();
+});
+updateCost();   // 免费版下计费行隐藏，这里只维护隐藏元素的数值以便日后可逆
+$('#quals').addEventListener('click', e => {
+  const o = e.target.closest('.fmt'); if(!o) return;
+  [...$('#quals').children].forEach(c => c.classList.remove('sel'));
+  o.classList.add('sel'); qual = o.dataset.q;
+});
+
+/* ================= 开始 ================= */
+go.addEventListener('click', async () => {
+  if(!picked) return;
+  stopPlayback();
+  if(pvAudio) pvAudio.pause();
+  resetUI();
+  go.disabled = true; go.textContent = '分离中…';
+  prog.classList.add('show');
+  try{
+    // 提交前先清掉上一次的错误条，避免旧报错一直挂在页面上像"没更新"
+    errBox.classList.remove('show'); errBox.textContent = '';
+    okline.textContent = '提交中…';
+    const res = await fetch('/api/separate', {
+      method:'POST', body: picked,
+      headers:(() => {
+        const h = { 'X-Filename': encodeURIComponent(picked.name), 'X-Mode': mode,
+                    'X-Device': 'cuda', 'X-Quality': qual };
+        if(mode === 'instruments') h['X-Targets'] = targets.join(',');
+        else if(mode === 'pro') h['X-Targets'] = 'all';   // 后端展开为全部乐器
+        return h;
+      })()
+    });
+    const data = await res.json();
+    if(res.status === 402 && !FREE){
+      // 积分不足：余额实时刷新 + 明确引导（仅商业版分支会走到）
+      if(data.balance !== undefined) setPts(data.balance);
+      showErr(data.error || '积分不足');
+      errBox.innerHTML += '<br><a href="https://user.amumusic.com/points" target="_blank" rel="noopener" style="color:var(--acc)">去官网签到赚积分 →</a>';
+      restoreGo(); prog.classList.remove('show');
+      return;
+    }
+    if(res.status === 401 && data.gate_locked && !FREE){
+      // 登录态被吊销/失效：回到登录卡（免费版不会走到）
+      gateOv.hidden = false;
+      showErr('登录状态已失效，请重新登录');
+      restoreGo(); prog.classList.remove('show');
+      return;
+    }
+    if(!res.ok) throw new Error(data.error || ('提交失败（HTTP ' + res.status + '）'));
+    if(!FREE){ if(data.balance !== undefined) setPts(data.balance); else gateStatus(); }
+    jobCost = (typeof data.cost === 'number') ? data.cost : costOf(mode);
+    job = data.job;
+    poll();
+  }catch(e){
+    showErr('提交失败：' + e.message);
+    restoreGo();
+  }
+});
+
+function poll(){
+  timer = setInterval(async () => {
+    try{
+      const r = await fetch('/api/status?job=' + job);
+      const d = await r.json();
+      if(!r.ok) throw new Error(d.error || '查询失败');
+      bar.style.width = Math.max(4, d.progress) + '%';
+      pstate.textContent = d.message || '处理中…';
+      ptime.textContent = '已用 ' + d.elapsed + 's' + (d.estimated ? ' / 预计约 ' + Math.round(d.estimated) + 's' : '');
+      if(d.status === 'done'){ clearInterval(timer); renderResult(d.result); }
+      else if(d.status === 'error'){
+        // 旧版本失败后「提交中…」会一直挂在页面上、进度条卡住，看起来像没更新。
+        // 这里把提交态、进度区一并收干净，只留错误框。
+        clearInterval(timer);
+        okline.textContent = '';
+        pstate.textContent = '分离失败';
+        prog.classList.remove('show');
+        showErr(d.error || '分离失败');
+        restoreGo();
+      }
+    }catch(e){
+      clearInterval(timer);
+      okline.textContent = '';
+      pstate.textContent = '失败';
+      prog.classList.remove('show');
+      showErr('状态查询失败：' + e.message);
+      restoreGo();
+    }
+  }, 700);
+}
+
+/* ================= 波形绘制 =================
+   gain：本轨音量（0~1），波形幅度与音量等比缩放 —— 拖推子时波形跟着变 */
+function paintWave(g, pk, w, h, color, alpha, glow, gain){
+  const n = pk.length; if(!n) return;
+  const k = (gain === undefined || gain === null) ? 1 : Math.max(0, gain);
+  const mid = h/2, maxA = h/2 - 4;
+  g.save();
+  g.globalAlpha = alpha; g.fillStyle = color;
+  if(glow){ g.shadowColor = color; g.shadowBlur = 6; }
+  const cols = Math.max(1, Math.round(w));
+  for(let x = 0; x < cols; x++){
+    const i0 = Math.floor(x/cols*n), i1 = Math.max(i0+1, Math.floor((x+1)/cols*n));
+    let v = 0;
+    for(let i = i0; i < i1 && i < n; i++) if(pk[i] > v) v = pk[i];
+    const a = Math.max(k > 0 ? 1 : 0.7, v*maxA*k);
+    g.fillRect(x, mid-a, 1, a*2);
+  }
+  g.restore();
+}
+
+function drawTrack(p){
+  const set = (cv, over) => {
+    if(!cv) return;
+    const dpr = window.devicePixelRatio || 1;
+    const w = p.waveEl.clientWidth, h = p.waveEl.clientHeight;
+    if(w < 2 || h < 2) return;
+    cv.width = Math.max(1, Math.round(w*dpr));
+    cv.height = Math.max(1, Math.round(h*dpr));
+    const g = cv.getContext('2d');
+    g.setTransform(dpr,0,0,dpr,0,0);
+    g.clearRect(0,0,w,h);
+    paintWave(g, p.peaks, w, h, p.color, over ? 1 : .32, false, p.volume);
+  };
+  set(p.cvBase, false);
+  set(p.cvOver, true);
+}
+
+function redrawAll(){ players.forEach(p => { if(p.peaks && p.peaks.length) drawTrack(p); }); }
+let rzT = null;
+window.addEventListener('resize', () => { clearTimeout(rzT); rzT = setTimeout(() => { redrawAll(); drawPvWave(); }, 160); });
+
+/* ================= 渲染结果 ================= */
+async function renderResult(res){
+  resultBox.classList.add('show');
+  tracksEl.innerHTML = '';
+  players = []; playing = false; refP = null;
+  dur = res.duration || 0;
+  setProgress(0);
+  ttot.textContent = fmtTime(dur);
+  resetLoop();
+
+  // 各分离轨（原始音频改为在上方「选择音频」卡片内试听，不再作为结果轨）
+  const silentSet = new Set(res.silent || []);
+  res.stems.forEach(s => {
+    makeTrack({ key:s.name, isMix:false, size:s.size, fmt:res.fmt,
+      silent:silentSet.has(s.name),
+      url:'/api/stream?job=' + job + '&stem=' + s.name });
+  });
+  applyMute();
+
+  let head = '✅ 分离完成，共 ' + res.stems.length + ' 条音轨';
+  if(mode === 'pro' && res.dropped_silent)
+    head = '🧩 全分离 Pro 完成：从全部乐器中检出 ' + res.stems.length + ' 种';
+  const costTail = FREE ? '。'
+    : ('。本次已扣除 ' + jobCost + ' 积分，当前余额 '
+       + (document.querySelector('#gatePts')
+          ? (document.querySelector('#gatePts').textContent.match(/\d+/) || ['?'])[0]
+          : '?') + '。');
+  okline.textContent = head + '，耗时 '
+    + res.elapsed.toFixed(0) + ' 秒' + costTail
+    + (silentSet.size ? ('　⚠️ 其中 ' + silentSet.size + ' 条在这首歌里没有检测到（' 
+        + res.stems.filter(s => silentSet.has(s.name))
+                   .map(s => (META[s.name] || {zh:s.name}).zh).join('、')
+        + '），已灰显，不是导出失败。') : '');
+  restoreGo(); pstate.textContent = '完成 ✅';
+
+  // 3) 取波形峰值（失败自动重试：服务重启瞬间可能拿不到，别让用户白等一单）
+  let peaksData = null;
+  for(let i = 0; i < 4 && !peaksData; i++){
+    if(i) await new Promise(r => setTimeout(r, 2000));
+    try{
+      const r = await fetch('/api/peaks?job=' + job + '&all=1');
+      const d = await r.json();
+      if(r.ok && (d.mix || (d.stems && Object.keys(d.stems).length))) peaksData = d;
+    }catch(e){ /* 重试 */ }
+  }
+  if(peaksData){
+    const d = peaksData;
+    if(d.mix && d.mix.duration) dur = d.mix.duration;
+    players.forEach(p => {
+      const dd = d.stems ? d.stems[p.key] : null;
+      if(dd && dd.duration) dur = dd.duration;
+      p.peaks = (dd && dd.peaks) ? dd.peaks : [];
+      if(p.loadEl){ p.loadEl.remove(); p.loadEl = null; }
+      drawTrack(p);
+      layoutRuler(p);
+    });
+    ttot.textContent = fmtTime(dur);
+  }else{
+    players.forEach(p => { if(p.loadEl) p.loadEl.textContent = '波形加载失败（可重新分离一次）'; });
+  }
+}
+
+function makeTrack(o){
+  const m = META[o.key] || { zh:o.key, c:'#94a3b8', ico:'♪' };
+  const el = document.createElement('div');
+  el.className = 'tk' + (o.isMix ? ' mix' : '') + (o.silent ? ' nosnd' : '');
+  if(o.silent) el.title = '这首歌里没有检测到该乐器';
+
+  const cbar = document.createElement('span'); cbar.className = 'cbar';
+  cbar.style.setProperty('--c', m.c);
+  const ico = document.createElement('span'); ico.className = 'ico'; ico.textContent = m.ico;
+  ico.style.setProperty('--c', m.c);
+  const nm = document.createElement('div'); nm.className = 'nm';
+  const nb = document.createElement('b'); nb.textContent = m.zh + (o.silent ? ' · 未检测到' : '');
+  const sp = document.createElement('span');
+  const sizeTxt = o.silent ? '这首里没有该乐器，跳过即可'
+    : (o.isMix ? o.sub
+      : (o.key + ' · ' + (o.fmt||'').toUpperCase() + ' · ' + (o.size/1048576).toFixed(1) + ' MB'));
+  sp.textContent = sizeTxt;
+  nm.append(nb, sp);
+
+  const smWrap = document.createElement('div'); smWrap.className = 'sm';
+  const bs = document.createElement('button'); bs.className = 'smb s'; bs.textContent = 'S'; bs.title = '独奏（只听这一轨）';
+  const bm = document.createElement('button'); bm.className = 'smb m'; bm.textContent = 'M'; bm.title = '静音';
+  smWrap.append(bs, bm);
+
+  const wave = document.createElement('div'); wave.className = 'wv';
+  const grid = document.createElement('div'); grid.className = 'grid';
+  const ruler = document.createElement('div'); ruler.className = 'tk-ruler';
+  const band = document.createElement('div'); band.className = 'loop-band';
+  const loA = document.createElement('div'); loA.className = 'loop-a';
+  const loB = document.createElement('div'); loB.className = 'loop-b';
+  const cvBase = document.createElement('canvas'); cvBase.className = 'base';
+  const cvOver = document.createElement('canvas'); cvOver.className = 'over';
+  const mid = document.createElement('div'); mid.className = 'midline';
+  const head = document.createElement('div'); head.className = 'tk-head';
+  const tip = document.createElement('div'); tip.className = 'tk-tip'; tip.textContent = '00:00';
+  const load = document.createElement('div'); load.className = 'tk-load'; load.textContent = '波形生成中…';
+  wave.append(grid, ruler, band, loA, loB, cvBase, cvOver, mid, head, tip, load);
+
+  /* 音量推子：拖动时同步缩放本轨波形（视觉反馈） */
+  const volbox = document.createElement('div'); volbox.className = 'volbox';
+  const vv = document.createElement('div'); vv.className = 'vv'; vv.textContent = '100%';
+  const vol = document.createElement('input'); vol.type = 'range'; vol.className = 'tk-vol';
+  vol.min = 0; vol.max = 1; vol.step = 0.01; vol.value = 1; vol.title = '本轨音量（波形随音量缩放）';
+  vol.style.setProperty('--c', m.c);
+  vol.addEventListener('input', () => {
+    p.volume = parseFloat(vol.value) || 0;
+    vv.textContent = Math.round(p.volume*100) + '%';
+    if(isAudible(p)) p.audio.volume = p.volume;
+    drawTrack(p);
+  });
+  volbox.append(vv, vol);
+
+  const dlBtn = document.createElement('button'); dlBtn.className = 'dl' + (o.isMix ? ' hide' : '');
+  dlBtn.textContent = '⬇'; dlBtn.title = o.isMix ? '' : '导出这一轨';
+
+  el.append(cbar, ico, nm, smWrap, wave, volbox, dlBtn);
+  tracksEl.appendChild(el);
+
+  const au = new Audio();
+  /* 锁死音高：部分 WebView2 / 老内核 preservesPitch 默认 false，
+     一旦 playbackRate 被改成 0.98/1.02 就会直接变调（≈±0.34 半音）。 */
+  try{ au.preservesPitch = true; au.mozPreservesPitch = true; au.webkitPreservesPitch = true; }catch(e){}
+  /* metadata：先只取时长元数据，点播放时再拉数据 —— 避免结果页一次并发拖 8 条
+     完整 WAV 把本地服务打满，波形计算期间更容易把播放卡在 00:00 */
+  au.src = o.url; au.preload = 'metadata';
+  au.addEventListener('ended', () => { /* 由主循环统一收尾 */ });
+
+  const p = { key:o.key, isMix:!!o.isMix, color:m.c, zh:m.zh, el,
+              audio:au, waveEl:wave, cvBase, cvOver, headEl:head, tipEl:tip,
+              loadEl:load, peaks:[], solo:false, mute:false, volume:1 };
+
+  bs.addEventListener('click', ev => {
+    ev.stopPropagation();
+    p.solo = !p.solo; if(p.solo) p.mute = false;
+    paintSM(p); applyMute();
+  });
+  bm.addEventListener('click', ev => {
+    ev.stopPropagation();
+    p.mute = !p.mute; if(p.mute) p.solo = false;
+    paintSM(p); applyMute();
+  });
+  if(!o.isMix){
+    dlBtn.addEventListener('click', () => openDl({ type:'one', stem:o.key, zh:m.zh }));
+  }
+
+  /* 波形交互：点击/拖动任意位置定位并播放 */
+  let rect = null;
+  const timeAt = cx => {
+    if(!rect) rect = wave.getBoundingClientRect();
+    const r = Math.max(0, Math.min(1, (cx - rect.left) / rect.width));
+    return r * (dur || 0);
+  };
+  wave.addEventListener('pointerdown', e => {
+    e.preventDefault();
+    rect = wave.getBoundingClientRect();
+    const t = timeAt(e.clientX);
+    if(loopOn){ loopClick(t); return; }
+    wave.classList.add('hot');
+    seekAll(t);
+    if(!playing) playAll();
+    const mv = ev => seekAll(timeAt(ev.clientX));
+    const up = () => {
+      window.removeEventListener('pointermove', mv);
+      window.removeEventListener('pointerup', up);
+      wave.classList.remove('hot');
+    };
+    window.addEventListener('pointermove', mv);
+    window.addEventListener('pointerup', up);
+  });
+  wave.addEventListener('mousemove', e => {
+    const r = wave.getBoundingClientRect();
+    const rel = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+    tip.textContent = fmtTime(rel * (dur || 0));
+    tip.style.left = (rel*100) + '%';
+  });
+
+  players.push(p);
+  return p;
+}
+
+function paintSM(p){
+  const el = p.el;
+  if(!el) return;
+  const bs = el.querySelector('.smb.s'), bm = el.querySelector('.smb.m');
+  if(bs) bs.classList.toggle('on', p.solo);
+  if(bm) bm.classList.toggle('on', p.mute);
+  el.classList.toggle('off', p.mute);
+}
+
+/* ================= 播放引擎（多轨同步） ================= */
+function anySolo(){ return players.some(p => p.solo); }
+function isAudible(p){ return anySolo() ? p.solo : !p.mute; }
+
+function applyMute(){
+  players.forEach(p => {
+    const on = isAudible(p);
+    p.audio.muted = !on;
+    p.audio.volume = p.volume;
+    /* 被静音的轨直接停掉，不再占用解码线程（尤其 solo 时只剩一条出声） */
+    if(playing && !on && !p.audio.paused) p.audio.pause();
+  });
+  if(playing){
+    /* 基准轨必须切到「当前真正能听到的第一条轨」 */
+    refP = players.find(isAudible) || players[0];
+    const t = refP.audio.currentTime || 0;
+    players.filter(isAudible).forEach(p => {
+      /* 只在这里对齐一次；播放过程中不再碰 currentTime */
+      if(p !== refP && Math.abs(p.audio.currentTime - t) > 0.05){
+        try{ p.audio.currentTime = t; }catch(e){}
+      }
+      if(p.audio.paused){ const pr = p.audio.play(); if(pr && pr.catch) pr.catch(()=>{}); }
+    });
+  }
+  applyFocus();
+}
+/* solo 时：独奏轨保持高亮，其余轨道（含波形）整体变暗 */
+function applyFocus(){
+  const soloOn = anySolo();
+  players.forEach(p => {
+    p.el.classList.toggle('dim', soloOn && !p.solo);
+    p.el.classList.toggle('soloed', soloOn && p.solo);
+  });
+}
+
+function playAll(){
+  if(!players.length) return;
+  if(pvAudio && !pvAudio.paused) pvAudio.pause();   /* 互斥：分轨开声 → 上方原始音频静音 */
+  refP = players.find(isAudible) || players[0];
+  const t = refP.audio.currentTime || 0;
+  players.forEach(p => {
+    const on = isAudible(p);
+    p.audio.muted = !on;
+    p.audio.volume = p.volume;
+    /* 🔴 只在起播前对齐一次。播放过程中绝不改 currentTime / playbackRate ——
+       反复 seek 会让浏览器不断重新发 Range 请求、重新缓冲，比调速更容易听成跑音。 */
+    if(Math.abs(p.audio.currentTime - t) > 0.02){
+      try{ p.audio.currentTime = t; }catch(e){}
+    }
+    if(p.audio.playbackRate !== 1) p.audio.playbackRate = 1;
+    try{ p.audio.preservesPitch = true; p.audio.mozPreservesPitch = true;
+         p.audio.webkitPreservesPitch = true; }catch(e){}
+  });
+  /* 只启动真正出声的轨；solo 时等于纯净单轨播放，没有任何同步逻辑参与 */
+  players.filter(isAudible).forEach(p => {
+    const pr = p.audio.play(); if(pr && pr.catch) pr.catch(()=>{});
+  });
+  playing = true;
+  playBtn.textContent = '⏸';
+  stallN = 0; lastLoopT = -1;      /* 重置看门狗 */
+  if(rafId) cancelAnimationFrame(rafId);
+  rafId = requestAnimationFrame(loop);
+}
+
+function pauseAll(){
+  playing = false;
+  players.forEach(p => p.audio.pause());
+  playBtn.textContent = '▶';
+  if(rafId){ cancelAnimationFrame(rafId); rafId = null; }
+}
+
+function stopPlayback(){
+  pauseAll();
+  players.forEach(p => { try{ p.audio.currentTime = 0; }catch(e){} });
+  setProgress(0);
+}
+
+function seekAll(t){
+  t = Math.max(0, Math.min(dur || 0, t));
+  players.forEach(p => { try{ p.audio.currentTime = t; }catch(e){} });
+  setProgress(t);
+}
+
+let stallN = 0, lastLoopT = -1;   /* 播放卡死看门狗：时间不走时自动重试 → 超时解开假死 */
+function loop(){
+  if(!playing) return;
+  const ref = refP || players[0];
+  const t = ref.audio.currentTime;
+  /* 看门狗：界面在「播放中」但参考轨时间 3 秒纹丝不动 = 数据没缓冲上来 */
+  if(t === lastLoopT){
+    stallN++;
+    if(stallN === 180){            /* 约 3 秒：自动重试一次播放（把卡住的加载救回来） */
+      players.filter(isAudible).forEach(p => { const pr = p.audio.play(); if(pr && pr.catch) pr.catch(()=>{}); });
+    }else if(stallN > 360){        /* 再等 3 秒仍不走：解除假死，交给用户重试 */
+      stallN = 0; lastLoopT = -1;
+      pauseAll();
+      showErr('音频缓冲超时（后台可能还在生成波形），请稍等几秒再点播放');
+      return;
+    }
+  }else{
+    stallN = 0; lastLoopT = t;
+  }
+  /* 🔴 播放循环只读，绝不写任何 audio 属性。
+     两条独立 <audio> 的 currentTime 天然有几毫秒抖动；任何「追赶」——
+     无论调 playbackRate 还是反复设 currentTime —— 都会让浏览器不断重新
+     seek / 重新缓冲，产生颤动、跳帧、金属声，听感就是「跑音」。
+     对齐只在起播、用户主动 seek、S/M 切换时各做一次，之后交给浏览器自己的时钟。 */
+  setProgress(t);
+  if(loopOn && loopA !== null && loopB !== null){
+    const a = Math.min(loopA, loopB), b = Math.max(loopA, loopB);
+    if(b - a > 0.2 && t >= b - 0.05){ seekAll(a); return; }
+  }
+  if(ref.audio.ended || (dur && t >= dur - 0.05)){
+    pauseAll(); seekAll(0); return;
+  }
+  rafId = requestAnimationFrame(loop);
+}
+
+function setProgress(t){
+  const pct = dur > 0 ? Math.max(0, Math.min(100, t/dur*100)) : 0;
+  document.documentElement.style.setProperty('--p', pct + '%');
+  tcur.textContent = fmtTime(t);
+}
+
+function fmtTime(s){
+  s = Math.max(0, Math.floor(s || 0));
+  const m = Math.floor(s/60), ss = s % 60;
+  return String(m).padStart(2,'0') + ':' + String(ss).padStart(2,'0');
+}
+
+playBtn.addEventListener('click', () => playing ? pauseAll() : playAll());
+rewBtn.addEventListener('click', () => { seekAll(0); if(playing) playAll(); });
+loopBtn.addEventListener('click', () => {
+  loopOn = !loopOn;
+  loopBtn.classList.toggle('on', loopOn);
+  if(loopOn){ loopA = null; loopB = null; }
+  drawLoopMarks();
+});
+expAud.addEventListener('click', e => {
+  e.preventDefault();
+  const names = players.filter(p => !p.isMix && isAudible(p)).map(p => p.key);
+  if(!names.length){ showErr('当前没有可听轨（全部静音），无法导出'); return; }
+  openDl({ type:'all', stems:names });
+});
+expall.addEventListener('click', e => {
+  e.preventDefault();
+  openDl({ type:'all' });
+});
+
+/* ================= 导出弹窗（下载时才选格式 / 采样率） ================= */
+function openDl(target){ dlTarget = target; dlMask.hidden = false; }
+function closeDl(){ dlMask.hidden = true; dlTarget = null; }
+$('#dlCancel').addEventListener('click', closeDl);
+dlMask.addEventListener('click', e => { if(e.target === dlMask) closeDl(); });
+$('#dlFmt').addEventListener('click', e => {
+  const o = e.target.closest('.dl-op'); if(!o) return;
+  [...$('#dlFmt').children].forEach(c => c.classList.remove('sel'));
+  o.classList.add('sel'); dlFmt = o.dataset.f;
+});
+$('#dlSr').addEventListener('click', e => {
+  const o = e.target.closest('.dl-op'); if(!o) return;
+  [...$('#dlSr').children].forEach(c => c.classList.remove('sel'));
+  o.classList.add('sel'); dlSr = parseInt(o.dataset.s, 10);
+});
+$('#dlGo').addEventListener('click', () => {
+  if(!dlTarget) return;
+  let url;
+  if(dlTarget.type === 'one'){
+    url = '/api/download?job=' + job + '&stem=' + dlTarget.stem
+        + '&dl=1&fmt=' + dlFmt + '&sr=' + dlSr;
+  }else{
+    url = '/api/export?job=' + job + '&fmt=' + dlFmt + '&sr=' + dlSr;
+    if(dlTarget.stems) url += '&stems=' + encodeURIComponent(dlTarget.stems.join(','));
+  }
+  closeDl();
+  window.location.href = url;   /* 转码在服务端进行，大文件 / 48k 首次导出稍等片刻 */
+});
+window.addEventListener('keydown', e => {
+  if(e.code === 'Space' && resultBox.classList.contains('show')
+     && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)){
+    e.preventDefault(); playing ? pauseAll() : playAll();
+  }
+});
+window.addEventListener('beforeunload', () => { timer && clearInterval(timer); players.forEach(p => p.audio.pause()); if(pvAudio) pvAudio.pause(); });
+
+/* ================= 杂项 ================= */
+function showErr(msg){ errBox.textContent = msg; errBox.classList.add('show'); }
+function restoreGo(){ go.disabled = false; go.textContent = '开始分离'; }
+function resetUI(){
+  errBox.classList.remove('show'); okline.textContent = '';
+  bar.style.width = '0%';
+  resultBox.classList.remove('show'); tracksEl.innerHTML = '';
+  players = []; playing = false; refP = null; dur = 0;
+  loopA = null; loopB = null; loopOn = false;
+  document.documentElement.style.setProperty('--p', '0%');
+  loopBtn.classList.remove('on');
+  playBtn.textContent = '▶';
+}
+
+/* ================= 时间刻度 / 循环标记 ================= */
+function fillRuler(ruler, total){
+  if(!ruler) return;
+  ruler.innerHTML = '';
+  const N = 8;
+  for(let k = 0; k <= N; k++){
+    const t = (total || 0) * k / N;
+    const tick = document.createElement('div');
+    tick.className = 'tk-tick';
+    tick.style.left = (k / N * 100) + '%';
+    tick.style.transform = k === 0 ? 'none' : (k === N ? 'translateX(-100%)' : 'translateX(-50%)');
+    tick.textContent = fmtTime(t);
+    ruler.appendChild(tick);
+  }
+}
+function layoutRuler(p){ fillRuler(p.waveEl.querySelector('.tk-ruler'), dur); }
+function layoutPvRuler(){ fillRuler(pvRulerEl, pvDur); }
+function drawLoopMarks(){
+  if(!dur) return;
+  players.forEach(p => {
+    const band = p.waveEl.querySelector('.loop-band');
+    const la = p.waveEl.querySelector('.loop-a');
+    const lb = p.waveEl.querySelector('.loop-b');
+    if(loopA !== null){ la.style.display = 'block'; la.style.left = (loopA/dur*100) + '%'; }
+    else la.style.display = 'none';
+    if(loopB !== null){ lb.style.display = 'block'; lb.style.left = (loopB/dur*100) + '%'; }
+    else lb.style.display = 'none';
+    if(loopA !== null && loopB !== null){
+      const a = Math.min(loopA, loopB), b = Math.max(loopA, loopB);
+      band.style.display = 'block';
+      band.style.left = (a/dur*100) + '%';
+      band.style.width = ((b - a)/dur*100) + '%';
+    } else band.style.display = 'none';
+  });
+}
+function loopClick(t){
+  if(loopA === null) loopA = t;
+  else if(loopB === null){ loopB = t; if(loopB < loopA){ const x = loopA; loopA = loopB; loopB = x; } }
+  else { loopA = t; loopB = null; }
+  drawLoopMarks();
+  if(loopA !== null && loopB !== null && !playing) playAll();
+}
+function resetLoop(){
+  loopA = null; loopB = null; loopOn = false;
+  loopBtn.classList.remove('on');
+  drawLoopMarks();
+}
+
+/* ================= MASTER 整包进度条（可拖动定位） ================= */
+masterBar.addEventListener('pointerdown', e => {
+  if(!dur) return;
+  e.preventDefault();
+  const seek = cx => {
+    const r = masterBar.getBoundingClientRect();
+    const rel = Math.max(0, Math.min(1, (cx - r.left) / r.width));
+    seekAll(rel * dur);
+  };
+  seek(e.clientX);
+  const mv = ev => seek(ev.clientX);
+  const up = () => {
+    window.removeEventListener('pointermove', mv);
+    window.removeEventListener('pointerup', up);
+  };
+  window.addEventListener('pointermove', mv);
+  window.addEventListener('pointerup', up);
+});
+
+/* ================= 界面配色（官网同款「外观」下拉：明暗 + 主题色，本地记忆） ================= */
+function refreshAppear(){
+  const t = document.documentElement.dataset.t || '0';
+  const md = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+  document.querySelectorAll('.ap-it[data-t]').forEach(b => b.classList.toggle('on', b.dataset.t === t));
+  document.querySelectorAll('.ap-it[data-md]').forEach(b => b.classList.toggle('on', b.dataset.md === md));
+}
+function setTheme(i, save){
+  document.documentElement.dataset.t = String(i);
+  refreshAppear();
+  drawPvWave();          /* 波形用主题色，需重绘 */
+  redrawAll();
+  if(save !== false){ try{ localStorage.setItem('amu_theme', String(i)); }catch(e){} }
+}
+document.querySelectorAll('.ap-it[data-t]').forEach(b => b.addEventListener('click', () => setTheme(parseInt(b.dataset.t, 10) || 0)));
+(function(){
+  let s = null;
+  try{ s = localStorage.getItem('amu_theme'); }catch(e){}
+  const i = (s === null) ? 0 : (parseInt(s, 10) || 0);
+  setTheme(i, false);   /* 无条件设置：黑夜金依赖 html[data-theme=dark][data-t=0]，默认主题也必须写 data-t */
+})();
+
+/* ================= 白天 / 黑夜切换（与主题色正交，本地记忆） ================= */
+function setLightDark(on, save){
+  document.documentElement.dataset.theme = on ? 'dark' : 'light';
+  refreshAppear();
+  drawPvWave();   /* 波形基色 --waveBase 随明暗变，需重绘 */
+  redrawAll();
+  if(save !== false){ try{ localStorage.setItem('amu_dark', on ? '1' : '0'); }catch(e){} }
+}
+document.querySelectorAll('.ap-it[data-md]').forEach(b => b.addEventListener('click', () => setLightDark(b.dataset.md === 'dark')));
+(function(){
+  let s = null; try{ s = localStorage.getItem('amu_dark'); }catch(e){}
+  if(s === '1') setLightDark(true, false);
+})();
+
+/* ================= 外观下拉：开合 / 点外关闭 / Esc ================= */
+(function(){
+  const wrap = document.getElementById('appear'), btn = document.getElementById('apBtn'), menu = document.getElementById('apMenu');
+  if(!wrap || !btn || !menu) return;
+  const close = () => { menu.hidden = true; btn.setAttribute('aria-expanded', 'false'); };
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    menu.hidden = !menu.hidden;
+    btn.setAttribute('aria-expanded', String(!menu.hidden));
+  });
+  document.addEventListener('click', e => { if(!menu.hidden && !wrap.contains(e.target)) close(); });
+  document.addEventListener('keydown', e => { if(e.key === 'Escape') close(); });
+  menu.addEventListener('click', e => { if(e.target.closest('.ap-it')) setTimeout(close, 0); });
+})();
+</script>
+</body>
+</html>

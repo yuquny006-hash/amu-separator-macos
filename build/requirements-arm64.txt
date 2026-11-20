@@ -1,0 +1,22 @@
+# Mac inference environment. Demucs 4.1 uses sphn, not torchaudio.
+demucs==4.1.0
+audio-separator[cpu]==0.47.0
+torch>=2.13,<3
+numpy>=2,<3
+soundfile>=0.13
+keyring>=25
+imageio-ffmpeg==0.6.0
+# audio-separator imports this directly; librosa 1.0 no longer depends on it.
+audioread==3.1.0
+
+# --- 乐器提取 / 全分离（Mega53 BS-RoFormer）所需 ---
+PyYAML>=6.0
+beartype>=0.18
+rotary-embedding-torch>=0.6
+einops>=0.7
+
+# --- 乐器提取 / 全分离（Mega53 BS-RoFormer）所需 ---
+PyYAML>=6.0
+beartype>=0.18
+rotary-embedding-torch>=0.6
+einops>=0.7

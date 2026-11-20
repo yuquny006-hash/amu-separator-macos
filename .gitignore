@@ -1,0 +1,11 @@
+*.bak*
+__pycache__/
+*.pyc
+app/uploads/
+app/models/
+app/_hfcache/
+dist/
+*.tar
+*.zip
+.DS_Store
+

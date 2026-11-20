@@ -1,0 +1,60 @@
+{
+  "tag": "amu-separator-models-free-20261120",
+  "parts": [
+    {
+      "name": "amu-separator-models.tar.part00",
+      "sha256": "134c9d05ca400135b2b809b62cdbd7ad47a0a2ca981809e6778424b46d1db46b",
+      "size": 67108864
+    },
+    {
+      "name": "amu-separator-models.tar.part01",
+      "sha256": "0f1fbb2a3d14c9074139d5d1d9a49b6d10f98a4685a6cc42fa8beb9f81740f3c",
+      "size": 67108864
+    },
+    {
+      "name": "amu-separator-models.tar.part02",
+      "sha256": "2014d32416c3959456da8d4792ef15043ac9ea36ae53d578b93b2a4cbab16c33",
+      "size": 67108864
+    },
+    {
+      "name": "amu-separator-models.tar.part03",
+      "sha256": "9a11eda89b80e57b729da89f26dc18ec81ecde3b64eff912b7ed2729a6c225a5",
+      "size": 67108864
+    },
+    {
+      "name": "amu-separator-models.tar.part04",
+      "sha256": "5ae82adc03b81360bef858110b1aa287a4474ec53dc5406786a45b1673f67a88",
+      "size": 67108864
+    },
+    {
+      "name": "amu-separator-models.tar.part05",
+      "sha256": "97065e3a38f6f64735017060db8de71967acaf63aacb1b8c0306972a2ef81ae4",
+      "size": 67108864
+    },
+    {
+      "name": "amu-separator-models.tar.part06",
+      "sha256": "d1be17377df1eb9dcf84d681c1418afe72648946339bbce26f733c53bafc3a87",
+      "size": 67108864
+    },
+    {
+      "name": "amu-separator-models.tar.part07",
+      "sha256": "989e5c5fe52d9f5435e129575c13ea3328a58260e28a034ef35b4df737389b61",
+      "size": 67108864
+    },
+    {
+      "name": "amu-separator-models.tar.part08",
+      "sha256": "6df2658339a5f10149029702607977a2a9e8adc05fcbaf6fb3a2188b4dfccdd5",
+      "size": 67108864
+    },
+    {
+      "name": "amu-separator-models.tar.part09",
+      "sha256": "d7f6f95a2015a66bcdf229b84d0f6b5db052b007107077ff18251d575116c8cb",
+      "size": 67108864
+    },
+    {
+      "name": "amu-separator-models.tar.part10",
+      "sha256": "d243c03d67fa3e665ae2f74819ec30f9d2a52b7f4ce4a4f14b22a81f26c52226",
+      "size": 27648000
+    }
+  ]
+}

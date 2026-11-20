@@ -1,0 +1,42 @@
+name: Build Amu Separator macOS Intel (Free Complete)
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: macos-15-intel
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: '0.9.2'
+      - name: Install bootstrap Python
+        run: uv python install 3.12
+      - name: Unit regression (free complete edition)
+        run: uv run --no-project --python 3.12 python -m unittest discover -s tests -v
+      - name: Fetch hash-pinned model assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: uv run --no-project --python 3.12 python build/fetch_models.py
+      - name: Build and test relocated app
+        run: bash build/build_macos_intel.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AmuMusic-macOS-Intel-Free
+          compression-level: 0
+          if-no-files-found: error
+          path: |
+            dist/AmuMusic-macOS-Intel.zip
+            dist/SHA256.txt
+            dist/使用说明_Intel.txt
+            dist/dependencies-intel.txt
+            dist/smoke-intel.json
+            dist/native-smoke-intel.json
+      - name: Publish to release (non-blocking)
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create mac-free-intel-20261120 dist/AmuMusic-macOS-Intel.zip dist/SHA256.txt --title "Build Amu Separator macOS Intel (Free Complete)" --notes "Amu 音频分离 完整版 · 完全免费 · intel" || true

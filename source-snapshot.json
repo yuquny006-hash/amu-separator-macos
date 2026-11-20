@@ -1,0 +1,19 @@
+{
+  "amu_login_gate.py": "95bf96d9064ecf287de70df40887acabaa6befb63f8f1c38a529213f7392995a",
+  "amu_msst/__init__.py": "d6cc49c5dfc54dddad847e470f19d001d80824e8665fc8a1da3f1539250e4311",
+  "amu_msst/attend.py": "577998ce9d2d72f85e97c8515eb327b88cc7a73b4bd2f3f57b2676fba94a2f5e",
+  "amu_msst/bs_roformer.py": "5c2b9243435a9d550c84975148b54b7f2171df3465b4ebf31dab5f70b6d34cd9",
+  "amu_msst/LICENSE_MSST.txt": "3282dc057695ef5b9a64909a7092ca40b2c292c232580fc6ace6e5d665cc0207",
+  "amu_selfuse.py": "5b92a6841b81388b333159d0df6abf93e3efecaa7f598407b6a3316de1815e1a",
+  "app.py": "62b1b9d2684c1ce21e309ceb205680b44dfcb13b42d2feb45ae4aadf2d853399",
+  "demucs_api_run.py": "91a58cb2a0e7680a611c0cdc8ea9490d5f440f1c7b116938b8def89df127bc29",
+  "harmony_separate.py": "012348ec2707f2f60a573ba070325f8ee243d7d23c053bd03e7fff972809565e",
+  "instrument_worker.py": "ad4356ae990b23994f67dbc8872d899e0094ca8c60a02ebd6981c7c355a4f985",
+  "launcher_mac.py": "6e3410281305993227cf7ab66f4b758e7ace168e467368e0e11d48126c67ae3d",
+  "mega53_download.py": "6b3781d37ec3936d7c31b8ef18f1fc955f76673aa5520513668267700de15717",
+  "models/README.txt": "c5f6b3796e269ba3b845b6ffe1ebb228d1464145f53d618db4d47b369f2f76ae",
+  "requirements-mac.txt": "cbac607b99ef846d3b7b66d36f419df9204f069c22e61f2b84c37a1f1433266c",
+  "separate.py": "22a3745e96bfa9d089dc600ff12316c84178cdd42d37d174751565273871c5b7",
+  "separate_core.py": "c7e02d738bcfd96bd0d5f0b1bcb8d7688ee12c33a80afaa5560ed00de0bd5fd7",
+  "web/index.html": "008c7ee0bd43f70a8be0c6d6f74dc7e0a23170e4d946fe1cd5a7d5294a867c11"
+}

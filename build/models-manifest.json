@@ -1,0 +1,66 @@
+{
+  "_hfcache/hub/models--adefossez--HTDemucs/refs/main": {
+    "size": 40,
+    "sha256": "84c9cdd9fc6d83ddbfead235f2198210b8e8a972dfa916bf939bac77e0750004"
+  },
+  "_hfcache/hub/models--adefossez--HTDemucs-6s/refs/main": {
+    "size": 40,
+    "sha256": "020a8a06a11165df32d6337a9b272d16bb9de2d28904c15bf3279a9ef4fe43c7"
+  },
+  "_hfcache/hub/models--adefossez--HTDemucs-6s/snapshots/3c5ee475be622df764938de97e4281a7b07ffa58/5c90dfd2.safetensors": {
+    "size": 54885744,
+    "sha256": "d2a1745f0744721f6b8ca5bf469b67c651ea5ed1b52998cab033b2158609d411"
+  },
+  "_hfcache/hub/models--adefossez--HTDemucs-6s/snapshots/3c5ee475be622df764938de97e4281a7b07ffa58/htdemucs_6s.yaml": {
+    "size": 21,
+    "sha256": "207405151270af8fd81c2373c25d27950916682ac91dca7884a11ce13dad6f58"
+  },
+  "_hfcache/hub/models--adefossez--HTDemucs-ft/refs/main": {
+    "size": 40,
+    "sha256": "a42a4734efa8ab70f1fcaf0bade27035a087c9ae839a1c90de35bc5cadbb05a7"
+  },
+  "_hfcache/hub/models--adefossez--HTDemucs-ft/snapshots/d74ac89c3a1e874fc78f152555cf4d8533f06cd4/04573f0d.safetensors": {
+    "size": 84025440,
+    "sha256": "68854b0d7c2b3274723b5761f6fd9f5aec5f1bcd3f0de7c1669546fdb7871b7c"
+  },
+  "_hfcache/hub/models--adefossez--HTDemucs-ft/snapshots/d74ac89c3a1e874fc78f152555cf4d8533f06cd4/92cfc3b6.safetensors": {
+    "size": 84025440,
+    "sha256": "a241863551f30d01c42bd7b97da40839922ead3acb0f1fcab25682f55b4eeb59"
+  },
+  "_hfcache/hub/models--adefossez--HTDemucs-ft/snapshots/d74ac89c3a1e874fc78f152555cf4d8533f06cd4/d12395a8.safetensors": {
+    "size": 84025440,
+    "sha256": "5b01a97567ae9a3178a6236fb520251045c03eb8834bc8c24a4eec11d6c8fb56"
+  },
+  "_hfcache/hub/models--adefossez--HTDemucs-ft/snapshots/d74ac89c3a1e874fc78f152555cf4d8533f06cd4/f7e0c4bc.safetensors": {
+    "size": 84025440,
+    "sha256": "2c85ab3c62dd6edd8e0b965e38b16fd1cdde357cc25de6b6bc9ce7c83f60925f"
+  },
+  "_hfcache/hub/models--adefossez--HTDemucs-ft/snapshots/d74ac89c3a1e874fc78f152555cf4d8533f06cd4/htdemucs_ft.yaml": {
+    "size": 149,
+    "sha256": "69470b8c1bbd674437b51bc9fb491327a10ab0396b702c93389b9cf750016346"
+  },
+  "_hfcache/hub/models--adefossez--HTDemucs/snapshots/cbc8a9b1a87023b7fd74e7b3412e6321c0eab003/955717e8.safetensors": {
+    "size": 84025440,
+    "sha256": "d9fa14133cfcc034a6758923bb3a8ca9f8dfd0b582134643bbf83f72c17576dd"
+  },
+  "_hfcache/hub/models--adefossez--HTDemucs/snapshots/cbc8a9b1a87023b7fd74e7b3412e6321c0eab003/htdemucs.yaml": {
+    "size": 21,
+    "sha256": "239c445d0b14454d541ad8bd9bb271c9e536d267e8a4625208744cbb2e7bb66c"
+  },
+  "models/bve/download_checks.json": {
+    "size": 28267,
+    "sha256": "d3622e1fa19c161d3cf704927711b453d593a3f1eb0f2e0838c3136907935151"
+  },
+  "models/bve/mdx_model_data.json": {
+    "size": 15358,
+    "sha256": "1aca8f9bcc57233bc714029663a9ec2345d9c7721f91e5e08f46392a879c6a9a"
+  },
+  "models/bve/UVR-BVE-4B_SN-44100-1.pth": {
+    "size": 223650277,
+    "sha256": "56165bdfa0dd5df7930ff76652200dc287e1bfef622bba5c812c736dc22067fe"
+  },
+  "models/bve/vr_model_data.json": {
+    "size": 3975,
+    "sha256": "6d41478a9bc3789243584893fed886f4318d18d8aca9ce261456debfc35b69ef"
+  }
+}
