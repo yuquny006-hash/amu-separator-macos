@@ -16,6 +16,7 @@ PY="$RES/runtime/bin/python3"
 # This is our private copied runtime, not the runner's managed interpreter.
 uv pip install --break-system-packages --python "$PY" -r build/requirements-arm64.txt
 uv pip check --python "$PY"
+"$PY" build/check_instruments.py
 uv pip freeze --python "$PY" > dist/dependencies-arm64.txt
 
 # samplerate 0.1 ships an Intel-only dylib in a platform-independent wheel.

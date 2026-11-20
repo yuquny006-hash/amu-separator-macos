@@ -21,6 +21,7 @@ PY="$RES/runtime/bin/python3"
 # This is our private copied runtime, not the runner's managed interpreter.
 uv pip install --break-system-packages --python "$PY" -r build/requirements-intel.txt
 uv pip check --python "$PY"
+"$PY" build/check_instruments.py
 uv pip freeze --python "$PY" > dist/dependencies-intel.txt
 
 # Intel samplerate wheel already contains a native dylib; bundle-local loading only.

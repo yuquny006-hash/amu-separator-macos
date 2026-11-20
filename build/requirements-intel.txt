@@ -25,3 +25,9 @@ PyYAML>=6.0
 beartype>=0.18
 rotary-embedding-torch>=0.6
 einops>=0.7
+
+# --- 乐器提取 / 全分离（Mega53 BS-RoFormer）所需 ---
+PyYAML>=6.0
+beartype>=0.18
+rotary-embedding-torch>=0.6
+einops>=0.7
